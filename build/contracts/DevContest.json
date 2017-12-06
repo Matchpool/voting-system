@@ -1,0 +1,155 @@
+{
+  "contract_name": "DevContest",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_tokenAddress",
+          "type": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "releaseStake",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_tokenAddress",
+          "type": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "stake",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "stakedAmount",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "payable": false,
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "Staked",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "StakeReleased",
+      "type": "event"
+    }
+  ],
+  "unlinked_binary": "0x6060604052341561000c57fe5b5b60008054600160a060020a03191633600160a060020a03161790555b5b610367806100396000396000f300606060405263ffffffff60e060020a600035041663482c5f3a81146100425780638da5cb5b14610063578063adc9772e1461008f578063f9931855146100b0575bfe5b341561004a57fe5b610061600160a060020a03600435166024356100de565b005b341561006b57fe5b6100736101c8565b60408051600160a060020a039092168252519081900360200190f35b341561009757fe5b610061600160a060020a03600435166024356101d7565b005b34156100b857fe5b6100cc600160a060020a0360043516610329565b60408051918252519081900360200190f35b600160a060020a0333166000908152600160205260408120548211156101045760006000fd5b50600160a060020a0333811660008181526001602090815260408083208054879003905580518201839052805160e060020a63a9059cbb02815260048101949094526024840186905251869485169363a9059cbb9360448083019493928390030190829087803b151561017357fe5b6102c65a03f1151561018157fe5b5050604080518481529051600160a060020a03331692507fb1c90ce88682afb6fb54564abd065e17c4728f8cb472ff17ef458143f3f779719181900360200190a25b505050565b600054600160a060020a031681565b6040805160006020918201819052825160e160020a636eb1769f028152600160a060020a03338116600483015230811660248301529351869492939285169263dd62ed3e926044808201939182900301818787803b151561023457fe5b6102c65a03f1151561024257fe5b505060405151915050828110156102595760006000fd5b6040805160006020918201819052825160e060020a6323b872dd028152600160a060020a0333811660048301523081166024830152604482018890529351938616936323b872dd9360648084019491938390030190829087803b15156102bb57fe5b6102c65a03f115156102c957fe5b505060408051600160a060020a0333166000818152600160209081529084902080548901905587835292519093507f9e71bc8eea02a63969f509818f2dafb9254532904319f9dbda79b67bd34a5f3d929181900390910190a25b50505050565b600160205260009081526040902054815600a165627a7a723058207783f41816d1adaea381f00451b2e136ea7b23810db34ebf1098392d35bd64f70029",
+  "networks": {
+    "1512493298001": {
+      "events": {
+        "0x9e71bc8eea02a63969f509818f2dafb9254532904319f9dbda79b67bd34a5f3d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Staked",
+          "type": "event"
+        },
+        "0xb1c90ce88682afb6fb54564abd065e17c4728f8cb472ff17ef458143f3f77971": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "StakeReleased",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x9895dd16bf562e8e2260418fa969f266b098e6a1",
+      "updated_at": 1512507001983
+    }
+  },
+  "schema_version": "0.0.5",
+  "updated_at": 1512507001983
+}
