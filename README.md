@@ -1,4 +1,4 @@
-### Development Challenge contract
+# Development Challenge contract
 
 Contract meant to plug into any existing ERC20 token that wants to incentivize crowdsourced development for their platform. Participants register their submission and the contract owner approves it. Token holders stake their token into the contract and vote with their stake.
 

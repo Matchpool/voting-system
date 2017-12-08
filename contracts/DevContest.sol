@@ -21,12 +21,13 @@ contract DevContest {
   address public owner;
   // Mapping of address staking => staked amount
   mapping (address => uint256) public stakedAmount;
-  mapping (address => Submission) submissions;
+  mapping (address => Submission) public submissions;
 
-  Submission[] public unapprovedSubmissions;
-  Submission[] public approvedSubmissions;
+  address[] public unapprovedSubmissions;
+  address[] public approvedSubmissions;
 
   uint256 public idCount;
+
   event Staked(address indexed _from, uint256 _value);
   event StakeReleased(address indexed _from, uint256 _value);
 
@@ -59,23 +60,53 @@ contract DevContest {
   }
 
   function registerSubmission (string _url) {
-    Submission newSub;
+
+    Submission memory newSub;
     newSub.submissionOwner = msg.sender;
     newSub.isApproved = false;
     newSub.url = _url;
     newSub.id = idCount;
     idCount += 1;
 
-    unapprovedSubmissions.push(newSub);
+    submissions[msg.sender] = newSub;
+    unapprovedSubmissions.push(msg.sender);
 
   }
 
-  function approveSubmission () {
+  function approveSubmission (address _address, uint256 _index) {
 
-    require(msg.sender = owner);
+    require(owner == msg.sender);
+    require(unapprovedSubmissions.length < _index);
 
+    Submission approvedSub = submissions[_address];
+    approvedSub.isApproved = true;
+    approvedSubmissions.push(_address);
+    delete unapprovedSubmissions[_index];
+  }
+
+  function getUnapprovedSubmissionAddresses() constant returns (address[] submissions) {
+    return unapprovedSubmissions;
+  }
+
+  function getApprovedSubmissionAddresses() constant returns (address[] submissions) {
+    return approvedSubmissions;
+  }
+
+  function vote() {
 
   }
+
+  /*function getUnapprovedSubmissionsCount() constant returns (uint count) {
+    return unapprovedSubmissions.length;
+  }
+
+  function getApprovedSubmissionsCount() constant returns (uint count) {
+    return unapprovedSubmissions.length;
+  }*/
+
+  /*function getApprovedSubmission(uint index) constant returns (Submission sub) {
+    return approvedSubmissions[index];
+  }*/
 }
 
 

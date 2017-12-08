@@ -19,7 +19,7 @@ contract MPToken {
 
     function MPToken() {
       // constructor
-      name = "Matchpool Token";
+      name = "MP Token";
       symbol = "MPT";
       decimals = 18;
       version = "0.1";
