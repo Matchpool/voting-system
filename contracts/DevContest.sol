@@ -1,5 +1,6 @@
 pragma solidity ^0.4.11;
 
+// TokenInterface allows DevContest contract to call approve function from erc20 tokens
 contract TokenInterface {
   function totalSupply() constant returns (uint256 totalSupply) {}
   function balanceOf(address _owner) constant returns (uint256 balance) {}
@@ -10,6 +11,9 @@ contract TokenInterface {
 }
 
 contract DevContest {
+
+  /// @title DevContest - Allows any existing ERC20 token contract to facilitate a contest with submissions and voting with the token's stake.
+  /// @author Michael O'Rourke - <michael@pkt.network>
 
   struct Submission {
     address submissionOwner;
@@ -22,11 +26,14 @@ contract DevContest {
   address public owner;
   // Mapping of address staking => staked amount
   mapping (address => uint256) public stakedAmount;
+  // Mapping of address to Submission struct
   mapping (address => Submission) public submissions;
 
+  // Contract owner must manually screen and approve submissions
   address[] public unapprovedSubmissions;
   address[] public approvedSubmissions;
 
+  //
   uint256 public idCount;
 
   event Staked(address indexed _from, uint256 _value);
@@ -35,9 +42,15 @@ contract DevContest {
   function DevContest() {
       owner = msg.sender;
   }
+  /*
+  * Staking functions
+  */
 
-  function stake(address _tokenAddress, uint256 amount) {
-    //address user = msg.sender;
+  /// @dev Stakes ERC20 compatible token into contract. Must call 'approve' on current token contract first.
+  /// @param _tokenAddress address of ERC20 token
+  /// @param amount Desired amount to stake in contract
+  /// @return
+  function stake(address _tokenAddress, uint256 amount) returns (bool) {
     TokenInterface token = TokenInterface(_tokenAddress);
 
     // get contract's allowance
@@ -48,9 +61,14 @@ contract DevContest {
     token.transferFrom(msg.sender, this, amount);
     stakedAmount[msg.sender] += amount;
     Staked(msg.sender, amount);
+
+    return true;
   }
 
-  function releaseStake(address _tokenAddress, uint256 amount) {
+  /// @dev Releases stake of ERC20 compatible token back to user by calling `transfer`.
+  /// @param _tokenAddress address of ERC20 token
+  /// @param amount Desired amount to transfer from contract
+  function releaseStake(address _tokenAddress, uint256 amount) returns (bool) {
     // Check that amount is less or = to current staked amount
     require(amount <= stakedAmount[msg.sender]);
     TokenInterface token = TokenInterface(_tokenAddress);
@@ -58,8 +76,15 @@ contract DevContest {
     stakedAmount[msg.sender] -= amount;
     token.transfer(msg.sender, amount);
     StakeReleased(msg.sender, amount);
+    return true;
   }
 
+  /*
+  * Submission functions
+  */
+
+  /// @dev Registers new submission that contract owner can approve.
+  /// @param url Link to project submission
   function registerSubmission (string _url) {
 
     Submission memory newSub;
@@ -73,6 +98,7 @@ contract DevContest {
     unapprovedSubmissions.push(msg.sender);
 
   }
+
 
   function approveSubmission (address _address, uint256 _index) {
 
@@ -109,6 +135,10 @@ contract DevContest {
     Submission approvedSub = submissions[_address];
     //set to zero
     approvedSub.votes = 0;
+  }
+
+  function addBounty() {
+    
   }
 }
 
