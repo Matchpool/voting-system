@@ -16,6 +16,7 @@ contract DevContest {
     bool isApproved;
     string url;
     uint256 id;
+    uint256 votes;
   }
 
   address public owner;
@@ -76,7 +77,7 @@ contract DevContest {
   function approveSubmission (address _address, uint256 _index) {
 
     require(owner == msg.sender);
-    require(unapprovedSubmissions.length < _index);
+    require(unapprovedSubmissions.length > _index);
 
     Submission approvedSub = submissions[_address];
     approvedSub.isApproved = true;
@@ -92,26 +93,35 @@ contract DevContest {
     return approvedSubmissions;
   }
 
-  function vote() {
+  function vote(address _address) {
+    require(stakedAmount[msg.sender] > 0);
 
+    Submission approvedSub = submissions[_address];
+    //set to zero
+    approvedSub.votes = 0;
+    // add new amount
+    approvedSub.votes += stakedAmount[msg.sender];
   }
 
-  /*function getUnapprovedSubmissionsCount() constant returns (uint count) {
-    return unapprovedSubmissions.length;
+  function removeVote(address _address) {
+    require(stakedAmount[msg.sender] > 0);
+
+    Submission approvedSub = submissions[_address];
+    //set to zero
+    approvedSub.votes = 0;
   }
-
-  function getApprovedSubmissionsCount() constant returns (uint count) {
-    return unapprovedSubmissions.length;
-  }*/
-
-  /*function getApprovedSubmission(uint index) constant returns (Submission sub) {
-    return approvedSubmissions[index];
-  }*/
 }
 
-
-/*DevContest.deployed().then(function(i) {voting = i})
+// TESTRPC SHORTCUTS
+/*
+DevContest.deployed().then(function(i) {voting = i})
 MPToken.deployed().then(function(i) {token = i})
 token.approve(voting.address, 100)
 voting.stake(token.address, 10)
-sender = web3.eth.accounts[0]*/
+sender = web3.eth.accounts[0]
+voting.registerSubmission("test")
+voting.getUnapprovedSubmissionAddresses()
+voting.approveSubmission("address", 0)
+voting.vote("address")
+
+*/
