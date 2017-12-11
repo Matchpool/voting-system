@@ -15,5 +15,9 @@ Contract meant to plug into any existing ERC20 token that wants to incentivize c
 - bounty
 - contract timeframe
 - reset contest
-- update submission
-- tests
+- edit submission
+- complete contest
+- finish early
+- cancel (return everything)
+- tournament style
+- mechanism like dash (reward people voting for winner)

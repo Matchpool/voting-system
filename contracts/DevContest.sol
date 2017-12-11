@@ -21,6 +21,8 @@ contract DevContest {
     string url;
     uint256 id;
     uint256 votes;
+    mapping (address => uint256) voterCount;
+
   }
 
   address public owner;
@@ -28,7 +30,8 @@ contract DevContest {
   mapping (address => uint256) public stakedAmount;
   // Mapping of address to Submission struct
   mapping (address => Submission) public submissions;
-
+  // Mapping of address to voted bool
+  mapping (address => bool) hasVoted;
   // Contract owner must manually screen and approve submissions
   address[] public unapprovedSubmissions;
   address[] public approvedSubmissions;
@@ -49,8 +52,8 @@ contract DevContest {
   /// @dev Stakes ERC20 compatible token into contract. Must call 'approve' on current token contract first.
   /// @param _tokenAddress address of ERC20 token
   /// @param amount Desired amount to stake in contract
-  /// @return
-  function stake(address _tokenAddress, uint256 amount) returns (bool) {
+  /// @return Success of stake
+  function stake(address _tokenAddress, uint256 amount) returns (bool success) {
     TokenInterface token = TokenInterface(_tokenAddress);
 
     // get contract's allowance
@@ -68,7 +71,8 @@ contract DevContest {
   /// @dev Releases stake of ERC20 compatible token back to user by calling `transfer`.
   /// @param _tokenAddress address of ERC20 token
   /// @param amount Desired amount to transfer from contract
-  function releaseStake(address _tokenAddress, uint256 amount) returns (bool) {
+  /// @return Success of release
+  function releaseStake(address _tokenAddress, uint256 amount) returns (bool success) {
     // Check that amount is less or = to current staked amount
     require(amount <= stakedAmount[msg.sender]);
     TokenInterface token = TokenInterface(_tokenAddress);
@@ -84,8 +88,9 @@ contract DevContest {
   */
 
   /// @dev Registers new submission that contract owner can approve.
-  /// @param url Link to project submission
-  function registerSubmission (string _url) {
+  /// @param _url Link to project submission
+  /// @return Success of submission register
+  function registerSubmission (string _url, string _name) returns (bool success){
 
     Submission memory newSub;
     newSub.submissionOwner = msg.sender;
@@ -96,11 +101,14 @@ contract DevContest {
 
     submissions[msg.sender] = newSub;
     unapprovedSubmissions.push(msg.sender);
-
+    return true;
   }
 
-
-  function approveSubmission (address _address, uint256 _index) {
+  /// @dev Contract owner approves submissions to be shown
+  /// @param _address of owner of submission to be approvedSub
+  /// @param _index of owner address in approvedSubmissions
+  /// @return Success of approval
+  function approveSubmission (address _address, uint256 _index) returns (bool success) {
 
     require(owner == msg.sender);
     require(unapprovedSubmissions.length > _index);
@@ -109,6 +117,7 @@ contract DevContest {
     approvedSub.isApproved = true;
     approvedSubmissions.push(_address);
     delete unapprovedSubmissions[_index];
+    return true;
   }
 
   function getUnapprovedSubmissionAddresses() constant returns (address[] submissions) {
@@ -119,26 +128,45 @@ contract DevContest {
     return approvedSubmissions;
   }
 
-  function vote(address _address) {
+  /*
+  * Voting functions
+  */
+
+  /// @dev vote for favorite submissions
+  /// @param _address of approved submission account wishes to vote for
+  /// @return Success of vote
+  function vote(address _address) returns (bool success) {
+
     require(stakedAmount[msg.sender] > 0);
+    require(hasVoted[msg.sender] == false);
 
     Submission approvedSub = submissions[_address];
-    //set to zero
-    approvedSub.votes = 0;
-    // add new amount
+
+    //uint256 votesLeft = stakedAmount[msg.sender] - approvedSub.voterCount[msg.sender];
+    //require(votesLeft > 0);
+
+    //approvedSub.voterCount[msg.sender];
     approvedSub.votes += stakedAmount[msg.sender];
+    hasVoted[msg.sender] = true;
+    return true;
   }
 
-  function removeVote(address _address) {
+  /// @dev remove vote from submission
+  /// @param _address of approved submission account wishes to remove vote for
+  /// @return success of vote removal
+  function removeVote(address _address) returns (bool success) {
     require(stakedAmount[msg.sender] > 0);
+    require(hasVoted[msg.sender] == true);
 
     Submission approvedSub = submissions[_address];
-    //set to zero
-    approvedSub.votes = 0;
+    approvedSub.votes -= stakedAmount[msg.sender];
+    hasVoted[msg.sender] = false;
+    return true;
   }
 
   function addBounty() {
-    
+    require(owner == msg.sender);
+
   }
 }
 
@@ -149,7 +177,7 @@ MPToken.deployed().then(function(i) {token = i})
 token.approve(voting.address, 100)
 voting.stake(token.address, 10)
 sender = web3.eth.accounts[0]
-voting.registerSubmission("test")
+voting.registerSubmission("http://woot.com", "Woot project")
 voting.getUnapprovedSubmissionAddresses()
 voting.approveSubmission("address", 0)
 voting.vote("address")
