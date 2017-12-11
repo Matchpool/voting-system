@@ -90,7 +90,7 @@ contract DevContest {
   /// @dev Registers new submission that contract owner can approve.
   /// @param _url Link to project submission
   /// @return Success of submission register
-  function registerSubmission (string _url, string _name) returns (bool success){
+  function registerSubmission (string _url) returns (bool success){
 
     Submission memory newSub;
     newSub.submissionOwner = msg.sender;
