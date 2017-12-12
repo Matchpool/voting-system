@@ -21,22 +21,24 @@ contract DevContest {
     string url;
     uint256 id;
     uint256 votes;
-    mapping (address => uint256) voterCount;
 
   }
 
   address public owner;
+
   // Mapping of address staking => staked amount
   mapping (address => uint256) public stakedAmount;
+  mapping (address => uint256) public voterCount;
+  mapping (address => bool) public hasVoted;
+
+  mapping (address => Voter) public voters;
   // Mapping of address to Submission struct
   mapping (address => Submission) public submissions;
-  // Mapping of address to voted bool
-  mapping (address => bool) hasVoted;
   // Contract owner must manually screen and approve submissions
   address[] public unapprovedSubmissions;
   address[] public approvedSubmissions;
 
-  //
+  uint256 public bounty;
   uint256 public idCount;
 
   event Staked(address indexed _from, uint256 _value);
@@ -142,7 +144,7 @@ contract DevContest {
 
     Submission approvedSub = submissions[_address];
 
-    approvedSub.voterCount[msg.sender] += stakedAmount[msg.sender];
+    voterCount[msg.sender] = stakedAmount[msg.sender];
     approvedSub.votes += stakedAmount[msg.sender];
     hasVoted[msg.sender] = true;
     return true;
@@ -157,21 +159,31 @@ contract DevContest {
 
     Submission approvedSub = submissions[_address];
 
-    uint256 count = approvedSub.voterCount[msg.sender];
-    uint256 amount = stakedAmount[msg.sender];
-
-    uint256 remainder = amount - count;
-
-    approvedSub.voterCount[msg.sender] = 0;
-    approvedSub.votes -= remainder;
+    approvedSub.votes -= voterCount[msg.sender];
+    voterCount[msg.sender] = 0;
     hasVoted[msg.sender] = false;
     return true;
   }
 
-  function addBounty() {
+  // Contract owner must approve amount to be transferred
+  function addBounty(address _tokenAddress, uint256 amount) {
     require(owner == msg.sender);
 
+    TokenInterface token = TokenInterface(_tokenAddress);
+    // get contract's allowance
+    uint256 allowance = token.allowance(msg.sender, this);
+    // do not continue if allowance is less than amount sent
+    require(allowance >= amount);
+    bounty += amount;
+    token.transferFrom(msg.sender, this, amount);
   }
+
+  function completeContest() {
+    
+  }
+
+
+
 }
 
 // TESTRPC SHORTCUTS
@@ -183,7 +195,8 @@ voting.stake(token.address, 10)
 sender = web3.eth.accounts[0]
 voting.registerSubmission("http://woot.com", "Woot project")
 voting.getUnapprovedSubmissionAddresses()
-voting.approveSubmission("address", 0)
-voting.vote("address")
+sub = addr
+voting.approveSubmission(sub, 0)
+voting.vote(sub)
 
 */
