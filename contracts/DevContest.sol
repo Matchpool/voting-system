@@ -142,10 +142,7 @@ contract DevContest {
 
     Submission approvedSub = submissions[_address];
 
-    //uint256 votesLeft = stakedAmount[msg.sender] - approvedSub.voterCount[msg.sender];
-    //require(votesLeft > 0);
-
-    //approvedSub.voterCount[msg.sender];
+    approvedSub.voterCount[msg.sender] += stakedAmount[msg.sender];
     approvedSub.votes += stakedAmount[msg.sender];
     hasVoted[msg.sender] = true;
     return true;
@@ -159,7 +156,14 @@ contract DevContest {
     require(hasVoted[msg.sender] == true);
 
     Submission approvedSub = submissions[_address];
-    approvedSub.votes -= stakedAmount[msg.sender];
+
+    uint256 count = approvedSub.voterCount[msg.sender];
+    uint256 amount = stakedAmount[msg.sender];
+
+    uint256 remainder = amount - count;
+
+    approvedSub.voterCount[msg.sender] = 0;
+    approvedSub.votes -= remainder;
     hasVoted[msg.sender] = false;
     return true;
   }
