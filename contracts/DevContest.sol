@@ -31,7 +31,7 @@ contract DevContest {
   mapping (address => uint256) public voterCount;
   mapping (address => bool) public hasVoted;
 
-  mapping (address => Voter) public voters;
+  //mapping (address => Voter) public voters;
   // Mapping of address to Submission struct
   mapping (address => Submission) public submissions;
   // Contract owner must manually screen and approve submissions
@@ -40,6 +40,9 @@ contract DevContest {
 
   uint256 public bounty;
   uint256 public idCount;
+
+  uint256 public highestVote;
+  address public winningAddress;
 
   event Staked(address indexed _from, uint256 _value);
   event StakeReleased(address indexed _from, uint256 _value);
@@ -178,12 +181,36 @@ contract DevContest {
     token.transferFrom(msg.sender, this, amount);
   }
 
-  function completeContest() {
-    
+  function completeContest(address _tokenAddress) {
+
+    require(owner == msg.sender);
+
+    uint256 subCount = approvedSubmissions.length;
+
+    for (uint8 i= 0; i<subCount; i+=1 ) {
+      address subAddress = approvedSubmissions[i];
+      Submission sub = submissions[subAddress];
+
+      //need to deal with tie case
+      if(sub.votes > highestVote) {
+        highestVote = 0;
+        highestVote += sub.votes;
+        winningAddress = subAddress;
+      }
+    }
+
+    payout();
   }
 
-
-
+  function payout() internal {
+    /*TokenInterface token = TokenInterface(_tokenAddress);
+    // get contract's allowance
+    uint256 allowance = token.allowance(msg.sender, this);
+    // do not continue if allowance is less than amount sent
+    require(allowance >= amount);
+    bounty += amount;
+    token.transferFrom(msg.sender, this, amount);*/
+  }
 }
 
 // TESTRPC SHORTCUTS
