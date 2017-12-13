@@ -44,11 +44,14 @@ contract DevContest {
   uint256 public highestVote;
   address public winningAddress;
 
+  TokenInterface public token;
+
   event Staked(address indexed _from, uint256 _value);
   event StakeReleased(address indexed _from, uint256 _value);
 
-  function DevContest() {
+  function DevContest(address tokenAddress) {
       owner = msg.sender;
+      token = TokenInterface(tokenAddress);
   }
   /*
   * Staking functions
@@ -59,7 +62,7 @@ contract DevContest {
   /// @param amount Desired amount to stake in contract
   /// @return Success of stake
   function stake(address _tokenAddress, uint256 amount) returns (bool success) {
-    TokenInterface token = TokenInterface(_tokenAddress);
+    //TokenInterface token = TokenInterface(_tokenAddress);
 
     // get contract's allowance
     uint256 allowance = token.allowance(msg.sender, this);
@@ -80,7 +83,7 @@ contract DevContest {
   function releaseStake(address _tokenAddress, uint256 amount) returns (bool success) {
     // Check that amount is less or = to current staked amount
     require(amount <= stakedAmount[msg.sender]);
-    TokenInterface token = TokenInterface(_tokenAddress);
+    //TokenInterface token = TokenInterface(_tokenAddress);
 
     stakedAmount[msg.sender] -= amount;
     token.transfer(msg.sender, amount);
@@ -172,7 +175,7 @@ contract DevContest {
   function addBounty(address _tokenAddress, uint256 amount) {
     require(owner == msg.sender);
 
-    TokenInterface token = TokenInterface(_tokenAddress);
+    //TokenInterface token = TokenInterface(_tokenAddress);
     // get contract's allowance
     uint256 allowance = token.allowance(msg.sender, this);
     // do not continue if allowance is less than amount sent
@@ -203,13 +206,12 @@ contract DevContest {
   }
 
   function payout() internal {
-    /*TokenInterface token = TokenInterface(_tokenAddress);
+    //TokenInterface token = TokenInterface(_tokenAddress);
     // get contract's allowance
-    uint256 allowance = token.allowance(msg.sender, this);
+    //uint256 allowance = token.allowance(msg.sender, this);
     // do not continue if allowance is less than amount sent
-    require(allowance >= amount);
-    bounty += amount;
-    token.transferFrom(msg.sender, this, amount);*/
+    //require(allowance >= amount);
+    token.transfer(winningAddress, bounty);
   }
 }
 
