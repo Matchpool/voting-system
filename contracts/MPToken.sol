@@ -25,7 +25,6 @@ contract MPToken {
       version = "0.1";
 
       totalSupply = 1000000000;
-
       balances[msg.sender] = totalSupply;
     }
 

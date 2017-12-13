@@ -44,26 +44,41 @@ contract DevContest {
   uint256 public highestVote;
   address public winningAddress;
 
+  uint256 public startBlock;
+  uint256 public endBlock;
+
   TokenInterface public token;
 
   event Staked(address indexed _from, uint256 _value);
   event StakeReleased(address indexed _from, uint256 _value);
 
-  function DevContest(address tokenAddress) {
+  function DevContest(address _tokenAddress, uint256 _startBlock, uint256 _endBlock) {
       owner = msg.sender;
-      token = TokenInterface(tokenAddress);
+      token = TokenInterface(_tokenAddress);
+      startBlock = _startBlock;
+      endBlock = _endBlock;
   }
+
+  function hasContestStarted() private constant returns (bool) {
+    // Check if global block.number is greater than or equal to start block and return result
+    return block.number >= startBlock;
+  }
+
+  function hasContestEnded() private constant returns (bool) {
+    // Return only greater than result because crowdsale goes until the endblock
+    return block.number > endBlock;
+  }
+
   /*
   * Staking functions
   */
 
   /// @dev Stakes ERC20 compatible token into contract. Must call 'approve' on current token contract first.
-  /// @param _tokenAddress address of ERC20 token
   /// @param amount Desired amount to stake in contract
   /// @return Success of stake
-  function stake(address _tokenAddress, uint256 amount) returns (bool success) {
-    //TokenInterface token = TokenInterface(_tokenAddress);
+  function stake(uint256 amount) returns (bool success) {
 
+    checkContestStatus();
     // get contract's allowance
     uint256 allowance = token.allowance(msg.sender, this);
     // do not continue if allowance is less than amount sent
@@ -77,10 +92,9 @@ contract DevContest {
   }
 
   /// @dev Releases stake of ERC20 compatible token back to user by calling `transfer`.
-  /// @param _tokenAddress address of ERC20 token
   /// @param amount Desired amount to transfer from contract
   /// @return Success of release
-  function releaseStake(address _tokenAddress, uint256 amount) returns (bool success) {
+  function releaseStake(uint256 amount) returns (bool success) {
     // Check that amount is less or = to current staked amount
     require(amount <= stakedAmount[msg.sender]);
     //TokenInterface token = TokenInterface(_tokenAddress);
@@ -99,6 +113,8 @@ contract DevContest {
   /// @param _url Link to project submission
   /// @return Success of submission register
   function registerSubmission (string _url) returns (bool success){
+
+    checkContestStatus();
 
     Submission memory newSub;
     newSub.submissionOwner = msg.sender;
@@ -172,10 +188,9 @@ contract DevContest {
   }
 
   // Contract owner must approve amount to be transferred
-  function addBounty(address _tokenAddress, uint256 amount) {
+  function addBounty(uint256 amount) {
     require(owner == msg.sender);
 
-    //TokenInterface token = TokenInterface(_tokenAddress);
     // get contract's allowance
     uint256 allowance = token.allowance(msg.sender, this);
     // do not continue if allowance is less than amount sent
@@ -184,8 +199,8 @@ contract DevContest {
     token.transferFrom(msg.sender, this, amount);
   }
 
-  function completeContest(address _tokenAddress) {
-
+  function completeContest() {
+    require(hasContestStarted());
     require(owner == msg.sender);
 
     uint256 subCount = approvedSubmissions.length;
@@ -206,21 +221,23 @@ contract DevContest {
   }
 
   function payout() internal {
-    //TokenInterface token = TokenInterface(_tokenAddress);
-    // get contract's allowance
-    //uint256 allowance = token.allowance(msg.sender, this);
-    // do not continue if allowance is less than amount sent
-    //require(allowance >= amount);
     token.transfer(winningAddress, bounty);
   }
+
+  function checkContestStatus() {
+    if (!hasContestStarted()) revert();
+    if (hasContestEnded()) revert();
+  }
 }
+
+
 
 // TESTRPC SHORTCUTS
 /*
 DevContest.deployed().then(function(i) {voting = i})
 MPToken.deployed().then(function(i) {token = i})
 token.approve(voting.address, 100)
-voting.stake(token.address, 10)
+voting.stake(10)
 sender = web3.eth.accounts[0]
 voting.registerSubmission("http://woot.com", "Woot project")
 voting.getUnapprovedSubmissionAddresses()

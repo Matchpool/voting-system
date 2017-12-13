@@ -38,13 +38,6 @@ before(function() {
     });
 
 
-  //
-  // }).then(function(addresses) {
-  //   return addresses.length;
-  // }).then(function(length) {
-  //   assert.equal(length, 0, "one");
-  // });
-
   it("should assert true", function(done) {
     var dev_contest = DevContest.deployed();
     assert.isTrue(true);
