@@ -12,9 +12,11 @@ contract TokenInterface {
 
 contract DevContest {
 
-  /// @title DevContest - Allows any existing ERC20 token contract to facilitate a contest with submissions and voting with the token's stake.
+  /// @title DevContest - Allows any existing ERC20 token contract to facilitate a contest with submissions and voting by staking tokens into the contract.
   /// @author Michael O'Rourke - <michael@pkt.network>
 
+
+  // Submissions must first get approved by contract owner to be voted on.
   struct Submission {
     address submissionOwner;
     bool isApproved;
@@ -24,33 +26,43 @@ contract DevContest {
 
   }
 
+  /*
+  * State variables
+  */
+
+  // Interface for interacting with an ERC20
+  TokenInterface public token;
+
   address public owner;
 
-  // Mapping of address staking => staked amount
+  // Mappings of voter information
   mapping (address => uint256) public stakedAmount;
   mapping (address => uint256) public voterCount;
   mapping (address => bool) public hasVoted;
 
-  //mapping (address => Voter) public voters;
-  // Mapping of address to Submission struct
-  mapping (address => Submission) public submissions;
   // Contract owner must manually screen and approve submissions
+  mapping (address => Submission) public submissions;
   address[] public unapprovedSubmissions;
   address[] public approvedSubmissions;
 
+  // Prize for winner
   uint256 public bounty;
-  uint256 public idCount;
 
+  // Global keeping track of submissions
+  uint256 public id;
+
+  // Globals for deciding winner
   uint256 public highestVote;
   address public winningAddress;
 
+  // Blocktimes for contest start
   uint256 public startBlock;
   uint256 public endBlock;
 
-  TokenInterface public token;
-
   event Staked(address indexed _from, uint256 _value);
   event StakeReleased(address indexed _from, uint256 _value);
+  event SubmissionRegistered(address indexed owner);
+
 
   function DevContest(address _tokenAddress, uint256 _startBlock, uint256 _endBlock) {
       owner = msg.sender;
@@ -59,49 +71,38 @@ contract DevContest {
       endBlock = _endBlock;
   }
 
-  function hasContestStarted() private constant returns (bool) {
-    // Check if global block.number is greater than or equal to start block and return result
-    return block.number >= startBlock;
-  }
-
-  function hasContestEnded() private constant returns (bool) {
-    // Return only greater than result because crowdsale goes until the endblock
-    return block.number > endBlock;
-  }
-
   /*
   * Staking functions
   */
 
   /// @dev Stakes ERC20 compatible token into contract. Must call 'approve' on current token contract first.
-  /// @param amount Desired amount to stake in contract
+  /// @param _amount Desired amount to stake in contract
   /// @return Success of stake
-  function stake(uint256 amount) returns (bool success) {
+  function stake(uint256 _amount) returns (bool success) {
 
     checkContestStatus();
     // get contract's allowance
     uint256 allowance = token.allowance(msg.sender, this);
     // do not continue if allowance is less than amount sent
-    require(allowance >= amount);
-
-    token.transferFrom(msg.sender, this, amount);
-    stakedAmount[msg.sender] += amount;
-    Staked(msg.sender, amount);
+    require(allowance >= _amount);
+    token.transferFrom(msg.sender, this, _amount);
+    stakedAmount[msg.sender] += _amount;
+    Staked(msg.sender, _amount);
 
     return true;
   }
 
   /// @dev Releases stake of ERC20 compatible token back to user by calling `transfer`.
-  /// @param amount Desired amount to transfer from contract
+  /// @param _amount Desired amount to transfer from contract
   /// @return Success of release
-  function releaseStake(uint256 amount) returns (bool success) {
-    // Check that amount is less or = to current staked amount
-    require(amount <= stakedAmount[msg.sender]);
-    //TokenInterface token = TokenInterface(_tokenAddress);
+  function releaseStake(uint256 _amount) returns (bool success) {
 
-    stakedAmount[msg.sender] -= amount;
-    token.transfer(msg.sender, amount);
-    StakeReleased(msg.sender, amount);
+    require(_amount <= stakedAmount[msg.sender]);
+    // If contest is over, transfer tokens back to owner
+
+    stakedAmount[msg.sender] -= _amount;
+    token.transfer(msg.sender, _amount);
+    StakeReleased(msg.sender, _amount);
     return true;
   }
 
@@ -120,8 +121,8 @@ contract DevContest {
     newSub.submissionOwner = msg.sender;
     newSub.isApproved = false;
     newSub.url = _url;
-    newSub.id = idCount;
-    idCount += 1;
+    newSub.id = id;
+    id += 1;
 
     submissions[msg.sender] = newSub;
     unapprovedSubmissions.push(msg.sender);
@@ -129,27 +130,19 @@ contract DevContest {
   }
 
   /// @dev Contract owner approves submissions to be shown
-  /// @param _address of owner of submission to be approvedSub
+  /// @param _address of owner of submission to be approved
   /// @param _index of owner address in approvedSubmissions
   /// @return Success of approval
-  function approveSubmission (address _address, uint256 _index) returns (bool success) {
+  function approveSubmission (address _subAddress, uint256 _index) returns (bool success) {
 
     require(owner == msg.sender);
     require(unapprovedSubmissions.length > _index);
 
-    Submission approvedSub = submissions[_address];
+    Submission approvedSub = submissions[_subAddress];
     approvedSub.isApproved = true;
-    approvedSubmissions.push(_address);
+    approvedSubmissions.push(_subAddress);
     delete unapprovedSubmissions[_index];
     return true;
-  }
-
-  function getUnapprovedSubmissionAddresses() constant returns (address[] submissions) {
-    return unapprovedSubmissions;
-  }
-
-  function getApprovedSubmissionAddresses() constant returns (address[] submissions) {
-    return approvedSubmissions;
   }
 
   /*
@@ -157,14 +150,14 @@ contract DevContest {
   */
 
   /// @dev vote for favorite submissions
-  /// @param _address of approved submission account wishes to vote for
+  /// @param _favoriteSubmission of approved submissions participant wishes to vote for
   /// @return Success of vote
-  function vote(address _address) returns (bool success) {
+  function vote(address _favoriteSubmission) returns (bool success) {
 
     require(stakedAmount[msg.sender] > 0);
     require(hasVoted[msg.sender] == false);
 
-    Submission approvedSub = submissions[_address];
+    Submission approvedSub = submissions[_favoriteSubmission];
 
     voterCount[msg.sender] = stakedAmount[msg.sender];
     approvedSub.votes += stakedAmount[msg.sender];
@@ -173,13 +166,13 @@ contract DevContest {
   }
 
   /// @dev remove vote from submission
-  /// @param _address of approved submission account wishes to remove vote for
+  /// @param _unfortunateSubmission address of approved submission participant wishes to remove vote for
   /// @return success of vote removal
-  function removeVote(address _address) returns (bool success) {
+  function removeVote(address _unfortunateSubmission) returns (bool success) {
     require(stakedAmount[msg.sender] > 0);
     require(hasVoted[msg.sender] == true);
 
-    Submission approvedSub = submissions[_address];
+    Submission approvedSub = submissions[_unfortunateSubmission];
 
     approvedSub.votes -= voterCount[msg.sender];
     voterCount[msg.sender] = 0;
@@ -187,14 +180,18 @@ contract DevContest {
     return true;
   }
 
-  // Contract owner must approve amount to be transferred
-  function addBounty(uint256 amount) {
+  /*
+  * Owner functions
+  */
+
+  /// @dev Add bounty for contest winner. Contract owner must approve amount to be transferred
+  /// @param _amount of bounty to be added
+  function addBounty(uint256 _amount) {
     require(owner == msg.sender);
 
-    // get contract's allowance
     uint256 allowance = token.allowance(msg.sender, this);
-    // do not continue if allowance is less than amount sent
     require(allowance >= amount);
+
     bounty += amount;
     token.transferFrom(msg.sender, this, amount);
   }
@@ -216,7 +213,6 @@ contract DevContest {
         winningAddress = subAddress;
       }
     }
-
     payout();
   }
 
@@ -224,9 +220,31 @@ contract DevContest {
     token.transfer(winningAddress, bounty);
   }
 
+  /*
+  * Helper functions
+  */
+  
+  function hasContestStarted() private constant returns (bool) {
+    // Check if global block.number is greater than or equal to start block and return result
+    return block.number >= startBlock;
+  }
+
+  function hasContestEnded() private constant returns (bool) {
+    // Return only greater than result because crowdsale goes until the endblock
+    return block.number > endBlock;
+  }
+
   function checkContestStatus() {
     if (!hasContestStarted()) revert();
     if (hasContestEnded()) revert();
+  }
+
+  function getUnapprovedSubmissionAddresses() constant returns (address[] submissions) {
+    return unapprovedSubmissions;
+  }
+
+  function getApprovedSubmissionAddresses() constant returns (address[] submissions) {
+    return approvedSubmissions;
   }
 }
 

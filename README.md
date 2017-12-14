@@ -9,10 +9,17 @@ Contract meant to plug into any existing ERC20 token that wants to incentivize c
 - No split votes (entire staked amount goes to choice)
 - Staked vote gets revoked if removed from contract
 
+## Questions
+
+- One submission per address?
+- Should people manually withdraw their stake?
+- What if there's a 2+ tie with votes?
 
 ### TODOs
 
+- change vote function
 - edit submission
 - cancel (return everything)
+- add eth bounty 
 - tournament style
 - mechanism like dash (reward people voting for winner)
