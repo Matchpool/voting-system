@@ -16,6 +16,7 @@ Contract meant to plug into any existing ERC20 token that wants to incentivize c
 
 ### TODOs
 
+- gas costs too expensive
 - change vote function
 - edit submission
 - cancel (return everything)
