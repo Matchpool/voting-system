@@ -98,8 +98,6 @@ contract DevContest {
   function releaseStake(uint256 _amount) returns (bool success) {
 
     require(_amount <= stakedAmount[msg.sender]);
-    // If contest is over, transfer tokens back to owner
-
     stakedAmount[msg.sender] -= _amount;
     token.transfer(msg.sender, _amount);
     StakeReleased(msg.sender, _amount);
@@ -223,7 +221,7 @@ contract DevContest {
   /*
   * Helper functions
   */
-  
+
   function hasContestStarted() private constant returns (bool) {
     // Check if global block.number is greater than or equal to start block and return result
     return block.number >= startBlock;

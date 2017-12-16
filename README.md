@@ -1,6 +1,6 @@
 # Development Challenge contract
 
-Contract meant to plug into any existing ERC20 token that wants to incentivize crowdsourced development for their platform. Participants register their submission and the contract owner approves it. Token holders stake their token into the contract and vote with their stake.
+Contract meant to plug into any existing ERC20 token that wants to incentivize crowdsourced development for their platform. Participants register their submission and the contract owner approves it. Token holders stake their token into the contract and vote for their favorite submission with their stake.
 
 ## Rules
 
@@ -12,7 +12,6 @@ Contract meant to plug into any existing ERC20 token that wants to incentivize c
 ## Questions
 
 - One submission per address?
-- Should people manually withdraw their stake?
 - What if there's a 2+ tie with votes?
 
 ### TODOs
@@ -20,6 +19,6 @@ Contract meant to plug into any existing ERC20 token that wants to incentivize c
 - change vote function
 - edit submission
 - cancel (return everything)
-- add eth bounty 
+- add eth bounty
 - tournament style
 - mechanism like dash (reward people voting for winner)
