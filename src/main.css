@@ -1,0 +1,80 @@
+/* Main Cointainers */
+#navgroup {
+  position: fixed;
+  width: 100%;
+  background-color: white;
+  height: 20%;
+}
+
+#nav1 {
+  height: 40%;
+}
+
+#nav2 {
+  height: 20%;
+  background-color: #1E1E4A;
+}
+
+#nav3 {
+  height: 40%;
+}
+
+#sidenav {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  position: fixed;
+  top: 20%;
+  height: 100%;
+  width: 16%;
+  z-index: 1;
+}
+
+#content {
+  position: fixed;
+  top: 20%;
+  left: 16%;
+  height: 100%;
+  width: 100%;
+  background-color: #F4F4F4;
+  overflow-y: scroll;
+  padding-left: 4%!important;
+  padding-top: 5%!important;
+  padding-bottom: 20%!important;
+}
+
+/* Bootstrap adjustments */
+.nav-pills {
+  margin-top: 20%;
+}
+.p-2 {
+  padding: 0rem!important;
+  padding-right: 0.05rem!important;
+}
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+  background-color: #1E1E4A;
+  color: #37DCD8;
+}
+
+.nav-pills .nav-link{
+  border-radius: 0rem;
+  padding: 15%;
+  text-align: left;
+  color: black;
+}
+
+.modal-content {
+  background-color: #1E1E4A;
+  color: white;
+}
+
+.btn-primary {
+  color: #1E1E4A;
+  background-color: white;
+  border: 2px solid transparent;
+  border-color: #37DCD8;
+}
+
+.container {
+  padding-left: 0px;
+  padding-right: 10%;
+  margin: 0px;
+}
