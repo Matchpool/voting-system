@@ -1,0 +1,37 @@
+Information about this commit:
+- Updated deploy_contracts for sake of demo'ing at current state with block number
+- Updated DevContest.sol to fix my compilation errors
+
+Pre-requisites:
+Node, NPM, yarn, ganache-cli
+
+How to run this project currently (This is not an explanation of the project - just a quick run-through at its current state):
+1. Open console and navigate to the src directory
+2. Run 'npm install' or 'yarn' (I prefer yarn)
+3. In some console, run 'ganache-cli'
+4. From the generated accounts: The first account (0) will be the owner of the contracts.
+5. Import at least the first two accounts to Metamask
+(NOTE: Keep these copied somewhere for easy copy paste later)
+6. In another console in the main directory: Run 'truffle compile' and then 'truffle migrate --reset'
+(NOTE: On Windows truffle may not work as it will try to run the truffle.js file. Easy fix is to rename truffle.js to truffle-config.js)
+7. Open src/js/GlobalVars.js and set ADDRESS to the DevContest address and TOKEN_ADDRESS to the MPToken address
+8. In a console within the src directory: run 'npm run dev'
+9. Navigate to http://localhost:3000/ and notice your Account 1's balance in Metamask. This is due to calling the constructors
+10. If you are on Account 1: You should see your balance at 1000000000
+11. While you are here on the page, feel free to click on the side navigation and the modal at the top right.
+12. These buttons currently are not linked to any special functionality at this point in time.
+13. Back onto the Vote side navigation display: Let's begin using our contracts
+14. Lets transfer some MPToken to Account 2. If you check Account 2 right now they have 0 :/
+(NOTE: You may need to refresh the page when switching accounts to accurately portray the balance)
+15. Lets send Account 2 500 MPTokens by inputting 500 in the first field, and the Account 2 Address in the next.
+Then, click the Transfer button on the UI and the Submit in Metamask. Refresh the page to reload your balance.
+16. Lets switch to Account 2. As account 2 I want to stake some MPToken and then vote on a Submission.
+17. First lets allow the DevContest contract to spend up to 100 MPToken for me.
+18. Input 100 in the first field and click the Approve button on the UI and Submit in Metamask
+19. Now lets stake 300 MPToken. Input 300 and click Stake. Notice it wont let you because you put a value greater than 100.
+20. Now try with 100 MPToken. It should go through this time.
+21. With 100 MPToken staked, that staked amount can be used as a vote towards a cool submission!
+22. Lets create our own submission: Type anything in the first field and click 'Register Submission' and hit submit
+23. Now open the browser console and click getUnapprovedSubmissionAddresses and copy the address
+24. Currently there is no validation whether the address is approved or not so paste the address in the second field and click 'Vote' and submit
+25. Refresh the page and check your balance. End of demo
