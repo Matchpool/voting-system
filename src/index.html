@@ -1,0 +1,229 @@
+<html>
+  <head>
+    <title>Test</title>
+    <!-- Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+    <!-- Web3 -->
+    <script src="./node_modules/web3/dist/web3.min.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="main.css">
+  </head>
+
+  <body>
+    <div id="navgroup" class="d-flex flex-column">
+      <div id="nav1" class="p-2">
+        <div class="d-flex"
+        style="align-items: center;
+          width: 100%;
+          height: 100%;">
+          <div class="mr-auto p-2">000 (PRIZE) MATCHPOOL DEVELOPMENT CHALLENGE</div>
+          <div class="p-2">TIME UNTIL CONTEST ENDS</div>
+        </div>
+      </div>
+      <div id="nav2" class="p-2"></div>
+
+      <div id="nav3" class="p-2">
+        <div class="d-flex"
+        style="align-items: center;
+          width: 100%;
+          height: 100%;">
+          <div class="mr-auto p-2">VOTING DASHBOARD</div>
+          <div class="p-2">Liquid Balance</div>
+          <div class="p-2" style="opacity:0;">Invisible spacing xD</div>
+          <div class="p-2">Locked Stake</div>
+          <div class="p-2" style="opacity:0;">Invisible spacing xD</div>
+          <div class="p-2">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+              Launch demo modal
+            </button>
+          </div>
+        </div>
+    </div>
+  </div>
+
+    <!-- Modal for button -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            ...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex flex-nowrap">    <!-- Div block start -->
+      <div id="sidenav" class="order-1 p-2">
+        <nav class="nav nav-pills flex-column">
+          <a class="nav-item nav-link active" data-toggle="pill" href="#" id="vote">Vote</a>
+          <a class="nav-item nav-link" data-toggle="pill" href="#" id="submit">Submit Proposal</a>
+          <a class="nav-item nav-link" data-toggle="pill" href="#" id="reset">Reset Challenge</a>
+        </nav>
+      </div>
+      <div id="content" class="order-2 p-2">
+        <div id="vote" class="content-toggle">
+          AMOUNT / URL / INDEX
+          <input id="submission"></input>
+          ADDRESS
+          <input id="submissionAddress"></input>
+
+          <br>DevContest Contract Address: <div id="owner"></div><br>User's MPToken Balance: <div id="supply"></div><br>
+
+
+          <br><button id="buttonTokenApprove">Approve(AMOUNT)</button><br>
+          <br><button id="buttonTokenTransfer">Transfer(AMOUNT, ADDRESS)</button><br>
+
+
+
+          <br><button id="buttonStake">Stake(AMOUNT)</button>
+          <ol>
+            <li>Checks allowance for user within the contract</li>
+            <li>Ensures the AMOUNT is less than the allowance</li>
+            <li>Transfer amount ERC20 compatible token to the contract</li>
+            <li>Calls the Staked event</li>
+          </ol>
+
+          <br><button id="buttonRelease">Release Stake(AMOUNT)</button>
+          <ol>
+            <li>Ensures AMOUNT is less than the staked amount
+            <li>The user's staked amount is reduced by the AMOUNT
+            <li>The AMOUNT is transferred to the user
+            <li>Calls the StakeReleased event
+          </ol>
+
+          <br><button id="buttonRegister">Register Submission(URL)</button>
+          <ol>
+            <li>Creates a Submission object
+            <li>Add it to the submissions with an unapproved state
+          </ol>
+
+          <br><button id="buttonApprove">Approve Submission(ADDRESS, INDEX)</button>
+          <ol>
+            <li>Ensure only owner can call
+            <li>Ensure the index is valid within the list of unapproved submissions
+            <li>Creates a new approved Submission object using the ADDRESS
+            <li>Add it to list of approved submissions
+            <li>Delete the unapproved submission at INDEX
+          </ol>
+
+          <br><button id="buttonGetUn">getUnapprovedSubmissionAddresses()</button>
+          <br>
+
+          <br><button id="buttonGetAp">getApprovedSubmissionAddresses()</button>
+          <br>
+
+          <br><button id="buttonVote">Vote(ADDRESS)</button>
+          <ol>
+            <li>Checks for a staked amount</li>
+            <li>Ensures no vote
+            <li>Sets the user voter count to the stake amount
+            <li>Increases the votes for the submission
+            <li>Flags true for having voted
+          </ol>
+
+          <br><button id="buttonRemVote">Remove Vote(ADDRESS)</button>
+          <ol>
+            <li>Opposite of Vote
+            <li>Reverts the flag to false
+          </ol>
+
+          <br><button id="buttonAddBounty">Add Bounty(AMOUNT)</button>
+
+          <br><button id="buttonCompleteContest">Complete Contest</button>
+
+
+        </div>
+        <div id="submit" class="content-toggle" style="display: none;">
+          <form class="container" id="needs-validation" novalidate>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="validationCustom01">First name</label>
+                <input type="text" class="form-control" id="validationCustom01" placeholder="First name" value="Mark" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="validationCustom02">Last name</label>
+                <input type="text" class="form-control" id="validationCustom02" placeholder="Last name" value="Otto" required>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="validationCustom03">City</label>
+                <input type="text" class="form-control" id="validationCustom03" placeholder="City" required>
+                <div class="invalid-feedback">
+                  Please provide a valid city.
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <label for="validationCustom04">State</label>
+                <input type="text" class="form-control" id="validationCustom04" placeholder="State" required>
+                <div class="invalid-feedback">
+                  Please provide a valid state.
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <label for="validationCustom05">Zip</label>
+                <input type="text" class="form-control" id="validationCustom05" placeholder="Zip" required>
+                <div class="invalid-feedback">
+                  Please provide a valid zip.
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-primary" type="submit">Submit form</button>
+          </form>
+        </div>
+        <div id="reset" class="content-toggle" style="display: none;">3333</div>
+      </div>
+    </div>    <!-- Div block end -->
+
+
+
+    <!-- Toggle displayed data -->
+    <script>
+    $("#sidenav a").click(function() {
+        var id = $(this).attr("id");
+        $("#content div.content-toggle").css("display", "none");
+        $("#content div#" + id + "").css("display", "block");
+        console.log(id);
+    });
+    </script>
+
+    <!-- Bootstrap example code for form validation -->
+    <script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function() {
+      'use strict';
+      window.addEventListener('load', function() {
+        var form = document.getElementById('needs-validation');
+        form.addEventListener('submit', function(event) {
+          if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        }, false);
+      }, false);
+    })();
+    </script>
+
+  <!-- JS to interact with smart contracts -->
+  <script src="./js/GlobalVars.js"></script>
+  <script src="./js/DevContest.js"></script>
+
+  </body>
+</html>

@@ -130,7 +130,7 @@ contract DevContest {
   }
 
   /// @dev Contract owner approves submissions to be shown
-  /// @param _address of owner of submission to be approved
+  /// @param _subAddress of owner of submission to be approved
   /// @param _index of owner address in approvedSubmissions
   /// @return Success of approval
   function approveSubmission (address _subAddress, uint256 _index) returns (bool success) {
@@ -190,10 +190,10 @@ contract DevContest {
     require(owner == msg.sender);
 
     uint256 allowance = token.allowance(msg.sender, this);
-    require(allowance >= amount);
+    require(allowance >= _amount);
 
-    bounty += amount;
-    token.transferFrom(msg.sender, this, amount);
+    bounty += _amount;
+    token.transferFrom(msg.sender, this, _amount);
   }
 
   function completeContest() {
@@ -223,7 +223,7 @@ contract DevContest {
   /*
   * Helper functions
   */
-  
+
   function hasContestStarted() private constant returns (bool) {
     // Check if global block.number is greater than or equal to start block and return result
     return block.number >= startBlock;

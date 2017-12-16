@@ -4,6 +4,6 @@ var MPToken = artifacts.require("./MPToken.sol");
 module.exports = function(deployer) {
 
   deployer.deploy(MPToken).then(function() {
-    return deployer.deploy(DevContest, MPToken.address, 165, 220);
+    return deployer.deploy(DevContest, MPToken.address, 5, 60);
   });
 };
