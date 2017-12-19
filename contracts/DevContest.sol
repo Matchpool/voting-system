@@ -23,7 +23,6 @@ contract DevContest {
     string url;
     uint256 id;
     uint256 votes;
-
   }
 
   /*
@@ -62,7 +61,9 @@ contract DevContest {
   event Staked(address indexed _from, uint256 _value);
   event StakeReleased(address indexed _from, uint256 _value);
   event SubmissionRegistered(address indexed owner);
-
+  event SubmissionApproved(address indexed owner);
+  event Voted(address indexed favoriteSubmission, address indexed who, uint256 amount);
+  event RemovedVote(address indexed unfortunateSubmission, address indexed who, uint256 amount)
 
   function DevContest(address _tokenAddress, uint256 _startBlock, uint256 _endBlock) {
       owner = msg.sender;
@@ -80,7 +81,7 @@ contract DevContest {
   /// @return Success of stake
   function stake(uint256 _amount) returns (bool success) {
 
-    checkContestStatus();
+    //checkContestStatus();
     // get contract's allowance
     uint256 allowance = token.allowance(msg.sender, this);
     // do not continue if allowance is less than amount sent
@@ -113,7 +114,7 @@ contract DevContest {
   /// @return Success of submission register
   function registerSubmission (string _url) returns (bool success){
 
-    checkContestStatus();
+    //checkContestStatus();
 
     Submission memory newSub;
     newSub.submissionOwner = msg.sender;
@@ -124,6 +125,7 @@ contract DevContest {
 
     submissions[msg.sender] = newSub;
     unapprovedSubmissions.push(msg.sender);
+    SubmissionRegistered(msg.sender);
     return true;
   }
 
@@ -140,6 +142,7 @@ contract DevContest {
     approvedSub.isApproved = true;
     approvedSubmissions.push(_subAddress);
     delete unapprovedSubmissions[_index];
+    SubmissionApproved(_subAddress);
     return true;
   }
 
@@ -160,6 +163,7 @@ contract DevContest {
     voterCount[msg.sender] = stakedAmount[msg.sender];
     approvedSub.votes += stakedAmount[msg.sender];
     hasVoted[msg.sender] = true;
+    Voted(_favoriteSubmission, msg.sender, stakedAmount[msg.sender]);
     return true;
   }
 
@@ -175,6 +179,7 @@ contract DevContest {
     approvedSub.votes -= voterCount[msg.sender];
     voterCount[msg.sender] = 0;
     hasVoted[msg.sender] = false;
+    RemovedVote(_unfortunateSubmission, msg.sender, stakedAmount[msg.sender]);
     return true;
   }
 
