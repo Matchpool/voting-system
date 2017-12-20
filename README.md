@@ -14,13 +14,13 @@ Contract meant to plug into any existing ERC20 token that wants to incentivize c
 - One submission per address?
 - What if there's a 2+ tie with votes?
 
-### TODOs
+## TODOs
 
 - gas costs too expensive
 - edit submission
 - cancel (return everything)
 
-### Interesting additions
+## Interesting additions
 
 - tournament style
 - mechanism like dash (reward people voting for winner)
