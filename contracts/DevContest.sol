@@ -250,20 +250,3 @@ contract DevContest {
     return approvedSubmissions;
   }
 }
-
-
-
-// TESTRPC SHORTCUTS
-/*
-DevContest.deployed().then(function(i) {voting = i})
-MPToken.deployed().then(function(i) {token = i})
-token.approve(voting.address, 100)
-voting.stake(10)
-sender = web3.eth.accounts[0]
-voting.registerSubmission("http://woot.com", "Woot project")
-voting.getUnapprovedSubmissionAddresses()
-sub = addr
-voting.approveSubmission(sub, 0)
-voting.vote(sub)
-
-*/

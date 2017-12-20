@@ -17,9 +17,10 @@ Contract meant to plug into any existing ERC20 token that wants to incentivize c
 ### TODOs
 
 - gas costs too expensive
-- change vote function
 - edit submission
 - cancel (return everything)
-- add eth bounty
+
+### Interesting additions
+
 - tournament style
 - mechanism like dash (reward people voting for winner)
