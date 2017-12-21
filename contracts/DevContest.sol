@@ -18,9 +18,10 @@ contract DevContest {
 
   // Submissions must first get approved by contract owner to be voted on.
   struct Submission {
-    address submissionOwner;
     bool isApproved;
-    string url;
+    bytes32 name;
+    bytes32 desc;
+    bytes32 url;
     uint256 id;
     uint256 votes;
   }
@@ -63,7 +64,7 @@ contract DevContest {
   event SubmissionRegistered(address indexed owner);
   event SubmissionApproved(address indexed owner);
   event Voted(address indexed favoriteSubmission, address indexed who, uint256 amount);
-  event RemovedVote(address indexed unfortunateSubmission, address indexed who, uint256 amount)
+  event RemovedVote(address indexed unfortunateSubmission, address indexed who, uint256 amount);
 
   function DevContest(address _tokenAddress, uint256 _startBlock, uint256 _endBlock) {
       owner = msg.sender;
@@ -110,15 +111,18 @@ contract DevContest {
   */
 
   /// @dev Registers new submission that contract owner can approve.
-  /// @param _url Link to project submission
+  /// @param _name of project submission
+  /// @param _desc of project submission
+  /// @param _url of project submission
   /// @return Success of submission register
-  function registerSubmission (string _url) returns (bool success){
+  function registerSubmission (bytes32 _name, bytes32 _desc, bytes32 _url) returns (bool success){
 
     //checkContestStatus();
 
     Submission memory newSub;
-    newSub.submissionOwner = msg.sender;
     newSub.isApproved = false;
+    newSub.name = _name;
+    newSub.desc = _desc;
     newSub.url = _url;
     newSub.id = id;
     id += 1;
@@ -139,9 +143,11 @@ contract DevContest {
     require(unapprovedSubmissions.length > _index);
 
     Submission approvedSub = submissions[_subAddress];
+
+    // Cannot add same submission twice
+    require(approvedSub.isApproved == false);
     approvedSub.isApproved = true;
     approvedSubmissions.push(_subAddress);
-    delete unapprovedSubmissions[_index];
     SubmissionApproved(_subAddress);
     return true;
   }
