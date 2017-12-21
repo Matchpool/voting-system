@@ -1,5 +1,7 @@
 pragma solidity ^0.4.11;
 
+import "./SafeMath.sol";
+
 // TokenInterface allows DevContest contract to call approve function from erc20 tokens
 contract TokenInterface {
   function totalSupply() constant returns (uint256 totalSupply) {}
@@ -15,6 +17,7 @@ contract DevContest {
   /// @title DevContest - Allows any existing ERC20 token contract to facilitate a contest with submissions and voting by staking tokens into the contract.
   /// @author Michael O'Rourke - <michael@pkt.network>
 
+  using SafeMath for uint256;
 
   // Submissions must first get approved by contract owner to be voted on.
   struct Submission {
@@ -40,6 +43,9 @@ contract DevContest {
   mapping (address => uint256) public voterCount;
   mapping (address => bool) public hasVoted;
 
+
+  // Mapping of whether address has submitted
+  mapping (address => bool) public hasSubmitted;
   // Contract owner must manually screen and approve submissions
   mapping (address => Submission) public submissions;
   address[] public unapprovedSubmissions;
@@ -71,6 +77,8 @@ contract DevContest {
       token = TokenInterface(_tokenAddress);
       startBlock = _startBlock;
       endBlock = _endBlock;
+      // Set id to 1 to reject submissions not in array
+      id = 1;
   }
 
   /*
@@ -82,15 +90,14 @@ contract DevContest {
   /// @return Success of stake
   function stake(uint256 _amount) returns (bool success) {
 
-    //checkContestStatus();
+    checkContestStatus();
     // get contract's allowance
     uint256 allowance = token.allowance(msg.sender, this);
     // do not continue if allowance is less than amount sent
     require(allowance >= _amount);
     token.transferFrom(msg.sender, this, _amount);
-    stakedAmount[msg.sender] += _amount;
+    stakedAmount[msg.sender].add(_amount);
     Staked(msg.sender, _amount);
-
     return true;
   }
 
@@ -100,7 +107,7 @@ contract DevContest {
   function releaseStake(uint256 _amount) returns (bool success) {
 
     require(_amount <= stakedAmount[msg.sender]);
-    stakedAmount[msg.sender] -= _amount;
+    stakedAmount[msg.sender].sub(_amount);
     token.transfer(msg.sender, _amount);
     StakeReleased(msg.sender, _amount);
     return true;
@@ -117,7 +124,9 @@ contract DevContest {
   /// @return Success of submission register
   function registerSubmission (bytes32 _name, bytes32 _desc, bytes32 _url) returns (bool success){
 
-    //checkContestStatus();
+    checkContestStatus();
+
+    require(hasSubmitted[msg.sender] == false);
 
     Submission memory newSub;
     newSub.isApproved = false;
@@ -128,6 +137,7 @@ contract DevContest {
     id += 1;
 
     submissions[msg.sender] = newSub;
+    hasSubmitted[msg.sender] = true;
     unapprovedSubmissions.push(msg.sender);
     SubmissionRegistered(msg.sender);
     return true;
@@ -140,12 +150,14 @@ contract DevContest {
   function approveSubmission (address _subAddress, uint256 _index) returns (bool success) {
 
     require(owner == msg.sender);
-    require(unapprovedSubmissions.length > _index);
+    //require(unapprovedSubmissions.length > _index);
 
     Submission approvedSub = submissions[_subAddress];
 
     // Cannot add same submission twice
     require(approvedSub.isApproved == false);
+    require(approvedSub.id == _index);
+    require(approvedSub.id != 0);
     approvedSub.isApproved = true;
     approvedSubmissions.push(_subAddress);
     SubmissionApproved(_subAddress);
@@ -167,7 +179,7 @@ contract DevContest {
     Submission approvedSub = submissions[_favoriteSubmission];
 
     voterCount[msg.sender] = stakedAmount[msg.sender];
-    approvedSub.votes += stakedAmount[msg.sender];
+    approvedSub.votes.add(stakedAmount[msg.sender]);
     hasVoted[msg.sender] = true;
     Voted(_favoriteSubmission, msg.sender, stakedAmount[msg.sender]);
     return true;
@@ -182,7 +194,7 @@ contract DevContest {
 
     Submission approvedSub = submissions[_unfortunateSubmission];
 
-    approvedSub.votes -= voterCount[msg.sender];
+    approvedSub.votes.sub(voterCount[msg.sender]);
     voterCount[msg.sender] = 0;
     hasVoted[msg.sender] = false;
     RemovedVote(_unfortunateSubmission, msg.sender, stakedAmount[msg.sender]);
@@ -201,12 +213,12 @@ contract DevContest {
     uint256 allowance = token.allowance(msg.sender, this);
     require(allowance >= _amount);
 
-    bounty += _amount;
+    bounty.add(_amount);
     token.transferFrom(msg.sender, this, _amount);
   }
 
   function completeContest() {
-    require(hasContestStarted());
+    //require(hasContestStarted());
     require(owner == msg.sender);
 
     uint256 subCount = approvedSubmissions.length;
@@ -256,3 +268,18 @@ contract DevContest {
     return approvedSubmissions;
   }
 }
+
+// TESTRPC SHORTCUTS
+/*
+DevContest.deployed().then(function(i) {voting = i})
+MPToken.deployed().then(function(i) {token = i})
+token.approve(voting.address, 100)
+voting.stake(10)
+sender = web3.eth.accounts[0]
+voting.registerSubmission("Woot project", "lots of woots", "http://woot.com")
+voting.getUnapprovedSubmissionAddresses()
+sub = addr
+voting.approveSubmission(sub, 0)
+voting.vote(sub)
+
+*/
