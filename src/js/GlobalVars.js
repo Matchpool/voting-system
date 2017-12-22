@@ -1,6 +1,6 @@
 /* Constants */
-let ADDRESS = "0xbdf3105aca83b2bd3e4c7bd976433042a31ed708";
-let TOKEN_ADDRESS = "0x597c6bddc84f3715878bed689302a27aa8401c94";
+let ADDRESS = "0x83fbe6a0972e2c6c7c04961995f88312e73f5a1f";
+let TOKEN_ADDRESS = "0x5dbe1464eb75b960fd86fade1d78020c2fe63859";
 
 
 let ABI =

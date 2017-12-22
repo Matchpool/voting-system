@@ -21,8 +21,13 @@
         style="align-items: center;
           width: 100%;
           height: 100%;">
-          <div class="mr-auto p-2">000 (PRIZE) MATCHPOOL DEVELOPMENT CHALLENGE</div>
-          <div class="p-2">TIME UNTIL CONTEST ENDS</div>
+          <div class="mr-auto p-2"><img src="imgs/logo.png" height="100%">000 (PRIZE) MATCHPOOL DEVELOPMENT CHALLENGE</div>
+          <div class="p-2">
+            <div class="d-flex flex-column">
+              <div class="p-2">8 : 6 : 54 : 35</div>
+              <div class="p-2">TIME UNTIL CONTEST ENDS</div>
+            </div>
+          </div>
         </div>
       </div>
       <div id="nav2" class="p-2"></div>
@@ -33,9 +38,22 @@
           width: 100%;
           height: 100%;">
           <div class="mr-auto p-2">VOTING DASHBOARD</div>
-          <div class="p-2">Liquid Balance</div>
           <div class="p-2" style="opacity:0;">Invisible spacing xD</div>
-          <div class="p-2">Locked Stake</div>
+          <div class="p-2">
+            <div class="d-flex flex-column">
+              <div class="p-2">Liquid Balance</div>
+              <div class="p-2">0 GUP</div>
+            </div>
+          </div>
+          <div class="p-2"><img src="imgs/gup.png" height="50%"></div>
+          <div class="p-2" style="opacity:0;">spacing xD</div>
+          <div class="p-2">
+            <div class="d-flex flex-column">
+              <div class="p-2">Locked Stake</div>
+              <div class="p-2">0.00 GUP</div>
+            </div>
+          </div>
+          <div class="p-2"><img src="imgs/lock.png" height="50%"></div>
           <div class="p-2" style="opacity:0;">Invisible spacing xD</div>
           <div class="p-2">
             <!-- Button trigger modal -->
@@ -52,13 +70,13 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <h5 class="modal-title" id="exampleModalLabel">STAKE GUP</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            ...
+            For voting on proposals. You can change it at any time, but it will be locked during proposal reveal periods until you reveal your votes.
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -71,13 +89,46 @@
     <div class="d-flex flex-nowrap">    <!-- Div block start -->
       <div id="sidenav" class="order-1 p-2">
         <nav class="nav nav-pills flex-column">
-          <a class="nav-item nav-link active" data-toggle="pill" href="#" id="vote">Vote</a>
-          <a class="nav-item nav-link" data-toggle="pill" href="#" id="submit">Submit Proposal</a>
-          <a class="nav-item nav-link" data-toggle="pill" href="#" id="reset">Reset Challenge</a>
+          <a class="nav-item nav-link active" data-toggle="pill" href="#" id="vote">VOTE</a>
+          <a class="nav-item nav-link" data-toggle="pill" href="#" id="submit">SUBMIT PROPOSAL</a>
+          <a class="nav-item nav-link" data-toggle="pill" href="#" id="reset">RESET CHALLENGE</a>
         </nav>
       </div>
       <div id="content" class="order-2 p-2">
         <div id="vote" class="content-toggle">
+
+
+          <div class="container">
+            <div class="row">
+              <div class="col-sm">
+                <div class="d-flex">
+                  <div class="mr-auto p-2">Proposal</div>
+                  <div class="p-2"><img src="imgs/idea.png" height="20%"></div>
+                  <div class="p-2" style="opacity:0;">Invisible spacing</div>
+                </div>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <div class="d-flex">
+                  <div class="mr-auto p-2"></div>
+                  <div class="p-2"><button type="button" class="btn btn-secondary">Vote</button></div>
+                </div>
+              </div>
+              <div class="col-sm">
+                <div class="d-flex">
+                  <div class="mr-auto p-2">Proposal</div>
+                  <div class="p-2"><img src="imgs/idea.png" height="20%"></div>
+                  <div class="p-2" style="opacity:0;">Invisible spacing</div>
+                </div>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <div class="d-flex">
+                  <div class="mr-auto p-2"></div>
+                  <div class="p-2"><button type="button" class="btn btn-secondary">Vote</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <br><br><br>
+
           AMOUNT / URL / INDEX
           <input id="submission"></input>
           ADDRESS

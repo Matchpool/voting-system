@@ -8,6 +8,8 @@
 
 #nav1 {
   height: 40%;
+  padding-left: 10px!important;
+  padding-right: 60px!important;
 }
 
 #nav2 {
@@ -16,7 +18,9 @@
 }
 
 #nav3 {
+  padding-left: 30px!important;
   height: 40%;
+  padding-right: 60px!important;
 }
 
 #sidenav {
@@ -52,6 +56,7 @@
 .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
   background-color: #1E1E4A;
   color: #37DCD8;
+  padding-left: 12%!important;
 }
 
 .nav-pills .nav-link{
@@ -73,8 +78,27 @@
   border-color: #37DCD8;
 }
 
+.btn-secondary {
+  color: #1E1E4A;
+  background-color: #37DCD8;
+  border-color: #37DCD8;
+}
+
 .container {
   padding-left: 0px;
   padding-right: 10%;
   margin: 0px;
+}
+
+.modal-dialog {
+  max-width: 600px;
+  margin: 30% 22% 1% 35%;
+}
+
+.modal-header {
+  border-bottom: 0px;
+}
+
+.modal-footer {
+  border-top: 0px;
 }
