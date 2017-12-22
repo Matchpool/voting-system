@@ -96,7 +96,7 @@ contract DevContest {
     // do not continue if allowance is less than amount sent
     require(allowance >= _amount);
     token.transferFrom(msg.sender, this, _amount);
-    stakedAmount[msg.sender].add(_amount);
+    stakedAmount[msg.sender] = stakedAmount[msg.sender].add(_amount);
     Staked(msg.sender, _amount);
     return true;
   }
@@ -107,7 +107,7 @@ contract DevContest {
   function releaseStake(uint256 _amount) returns (bool success) {
 
     require(_amount <= stakedAmount[msg.sender]);
-    stakedAmount[msg.sender].sub(_amount);
+    stakedAmount[msg.sender] = stakedAmount[msg.sender].sub(_amount);
     token.transfer(msg.sender, _amount);
     StakeReleased(msg.sender, _amount);
     return true;
@@ -179,7 +179,7 @@ contract DevContest {
     Submission approvedSub = submissions[_favoriteSubmission];
 
     voterCount[msg.sender] = stakedAmount[msg.sender];
-    approvedSub.votes.add(stakedAmount[msg.sender]);
+    approvedSub.votes = approvedSub.votes.add(stakedAmount[msg.sender]);
     hasVoted[msg.sender] = true;
     Voted(_favoriteSubmission, msg.sender, stakedAmount[msg.sender]);
     return true;
@@ -194,7 +194,7 @@ contract DevContest {
 
     Submission approvedSub = submissions[_unfortunateSubmission];
 
-    approvedSub.votes.sub(voterCount[msg.sender]);
+    approvedSub.votes = approvedSub.votes.sub(voterCount[msg.sender]);
     voterCount[msg.sender] = 0;
     hasVoted[msg.sender] = false;
     RemovedVote(_unfortunateSubmission, msg.sender, stakedAmount[msg.sender]);
@@ -213,7 +213,7 @@ contract DevContest {
     uint256 allowance = token.allowance(msg.sender, this);
     require(allowance >= _amount);
 
-    bounty.add(_amount);
+    bounty = bounty.add(_amount);
     token.transferFrom(msg.sender, this, _amount);
   }
 
@@ -279,7 +279,7 @@ sender = web3.eth.accounts[0]
 voting.registerSubmission("Woot project", "lots of woots", "http://woot.com")
 voting.getUnapprovedSubmissionAddresses()
 sub = addr
-voting.approveSubmission(sub, 0)
+voting.approveSubmission(sub, 1)
 voting.vote(sub)
 
 */
