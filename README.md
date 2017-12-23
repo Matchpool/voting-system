@@ -4,7 +4,7 @@ Contract meant to plug into any existing ERC20 token that wants to incentivize c
 
 ## Rules
 
-- Must call `approve` on token contract before staking or adding bounty
+- Must call `approve()` on token contract before staking or adding bounty
 - Contract owner sets the bounty and timeframe for challenge
 - No split votes (entire staked amount goes to choice)
 - Must remove vote before removing stake
@@ -17,6 +17,6 @@ Contract meant to plug into any existing ERC20 token that wants to incentivize c
 
 ## Interesting additions
 
-- Add time frame for submissions then allow for voting
+- Add timeframe for submissions then allow for voting
 - Reward people who voted for winning submission with 10% of bounty
 - Tournament style with highest votes going to next round
