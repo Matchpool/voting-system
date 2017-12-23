@@ -11,12 +11,10 @@ Contract meant to plug into any existing ERC20 token that wants to incentivize c
 
 ## Questions
 
-- One submission per address?
 - What if there's a 2+ tie with votes?
 
 ## TODOs
 
-- gas costs too expensive
 - edit submission
 - cancel (return everything)
 
