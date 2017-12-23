@@ -17,5 +17,6 @@ Contract meant to plug into any existing ERC20 token that wants to incentivize c
 
 ## Interesting additions
 
-- tournament style with highest votes going to next round
-- mechanism like dash (reward people voting for winner)
+- Add time frame for submissions then allow for voting
+- Reward people who voted for winning submission with 10% of bounty
+- Tournament style with highest votes going to next round
