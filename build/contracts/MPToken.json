@@ -739,10 +739,10 @@
           "type": "event"
         }
       },
-      "updated_at": 1514034663775,
-      "address": "0x606fcf999cb7d1d8e88efb687f04f85e646c4162"
+      "updated_at": 1514039105396,
+      "address": "0x6100943ab7c67f131f56782b203ff144b29b5231"
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1514034663775
+  "updated_at": 1514039105396
 }

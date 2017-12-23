@@ -21,6 +21,7 @@ contract DevContest {
 
   // Submissions must first get approved by contract owner to be voted on.
   struct Submission {
+    address submitter;
     bool isApproved;
     bytes32 name;
     bytes32 desc;
@@ -65,6 +66,10 @@ contract DevContest {
   uint256 public startBlock;
   uint256 public endBlock;
 
+  /*
+  * Events
+  */
+
   event Staked(address indexed _from, uint256 _value);
   event StakeReleased(address indexed _from, uint256 _value);
   event SubmissionRegistered(address indexed owner);
@@ -77,9 +82,75 @@ contract DevContest {
       token = TokenInterface(_tokenAddress);
       startBlock = _startBlock;
       endBlock = _endBlock;
-      // Set id to 1 to reject submissions not in array
+      // Set id to 1 to reject submissions not in approvedSubmissions
       id = 1;
   }
+
+    /*
+    * Submission functions
+    */
+
+    /// @dev Registers new submission that contract owner can approve
+    /// @param _name of project submission
+    /// @param _desc of project submission
+    /// @param _url of project submission
+    /// @return Success of submission register
+    function registerSubmission (bytes32 _name, bytes32 _desc, bytes32 _url) returns (bool success){
+
+      checkContestStatus();
+      require(hasSubmitted[msg.sender] == false);
+
+      Submission memory newSub;
+      newSub.isApproved = false;
+      newSub.submitter = msg.sender;
+      newSub.name = _name;
+      newSub.desc = _desc;
+      newSub.url = _url;
+      newSub.id = id;
+      id += 1;
+
+      submissions[msg.sender] = newSub;
+      hasSubmitted[msg.sender] = true;
+      unapprovedSubmissions.push(msg.sender);
+      SubmissionRegistered(msg.sender);
+      return true;
+    }
+    
+    /// @dev Edit submission by submitter
+    /// @param _name of project submission
+    /// @param _desc of project submission
+    /// @param _url of project submission
+    /// @return Success of submission edit
+    function editSubmission(bytes32 _name, bytes32 _desc, bytes32 _url) returns (bool success) {
+
+      Submission sub = submissions[msg.sender];
+      require(sub.submitter == msg.sender);
+      sub.name = _name;
+      sub.desc = _desc;
+      sub.url = _url;
+      return true;
+    }
+
+    /// @dev Contract owner approves submissions to be shown
+    /// @param _subAddress of owner of submission to be approved
+    /// @param _index of owner address in approvedSubmissions
+    /// @return Success of approval
+    function approveSubmission (address _subAddress, uint256 _index) returns (bool success) {
+
+      require(owner == msg.sender);
+      //require(unapprovedSubmissions.length > _index);
+
+      Submission approvedSub = submissions[_subAddress];
+
+      // Cannot add same submission twice
+      require(approvedSub.isApproved == false);
+      require(approvedSub.id == _index);
+      require(approvedSub.id != 0);
+      approvedSub.isApproved = true;
+      approvedSubmissions.push(_subAddress);
+      SubmissionApproved(_subAddress);
+      return true;
+    }
 
   /*
   * Staking functions
@@ -110,57 +181,6 @@ contract DevContest {
     stakedAmount[msg.sender] = stakedAmount[msg.sender].sub(_amount);
     token.transfer(msg.sender, _amount);
     StakeReleased(msg.sender, _amount);
-    return true;
-  }
-
-  /*
-  * Submission functions
-  */
-
-  /// @dev Registers new submission that contract owner can approve.
-  /// @param _name of project submission
-  /// @param _desc of project submission
-  /// @param _url of project submission
-  /// @return Success of submission register
-  function registerSubmission (bytes32 _name, bytes32 _desc, bytes32 _url) returns (bool success){
-
-    checkContestStatus();
-
-    require(hasSubmitted[msg.sender] == false);
-
-    Submission memory newSub;
-    newSub.isApproved = false;
-    newSub.name = _name;
-    newSub.desc = _desc;
-    newSub.url = _url;
-    newSub.id = id;
-    id += 1;
-
-    submissions[msg.sender] = newSub;
-    hasSubmitted[msg.sender] = true;
-    unapprovedSubmissions.push(msg.sender);
-    SubmissionRegistered(msg.sender);
-    return true;
-  }
-
-  /// @dev Contract owner approves submissions to be shown
-  /// @param _subAddress of owner of submission to be approved
-  /// @param _index of owner address in approvedSubmissions
-  /// @return Success of approval
-  function approveSubmission (address _subAddress, uint256 _index) returns (bool success) {
-
-    require(owner == msg.sender);
-    //require(unapprovedSubmissions.length > _index);
-
-    Submission approvedSub = submissions[_subAddress];
-
-    // Cannot add same submission twice
-    require(approvedSub.isApproved == false);
-    require(approvedSub.id == _index);
-    require(approvedSub.id != 0);
-    approvedSub.isApproved = true;
-    approvedSubmissions.push(_subAddress);
-    SubmissionApproved(_subAddress);
     return true;
   }
 
@@ -218,7 +238,7 @@ contract DevContest {
   }
 
   function completeContest() {
-    //require(hasContestStarted());
+    require(hasContestStarted());
     require(owner == msg.sender);
 
     uint256 subCount = approvedSubmissions.length;
@@ -268,18 +288,3 @@ contract DevContest {
     return approvedSubmissions;
   }
 }
-
-// TESTRPC SHORTCUTS
-/*
-DevContest.deployed().then(function(i) {voting = i})
-MPToken.deployed().then(function(i) {token = i})
-token.approve(voting.address, 100)
-voting.stake(10)
-sender = web3.eth.accounts[0]
-voting.registerSubmission("Woot project", "lots of woots", "http://woot.com")
-voting.getUnapprovedSubmissionAddresses()
-sub = addr
-voting.approveSubmission(sub, 1)
-voting.vote(sub)
-
-*/
