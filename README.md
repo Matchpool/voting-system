@@ -7,7 +7,7 @@ Contract meant to plug into any existing ERC20 token that wants to incentivize c
 - Must call `approve` on token contract before staking
 - Contract owner sets the bounty and timeframe for challenge
 - No split votes (entire staked amount goes to choice)
-- Staked vote gets revoked if removed from contract
+- Must remove vote before removing stake
 
 ## Questions
 

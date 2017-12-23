@@ -105,7 +105,7 @@ contract DevContest {
   /// @param _amount Desired amount to transfer from contract
   /// @return Success of release
   function releaseStake(uint256 _amount) returns (bool success) {
-
+    require(hasVoted[msg.sender] == false);
     require(_amount <= stakedAmount[msg.sender]);
     stakedAmount[msg.sender] = stakedAmount[msg.sender].sub(_amount);
     token.transfer(msg.sender, _amount);
