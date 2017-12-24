@@ -41,7 +41,7 @@ contract DevContest {
 
   // Mappings of voter information
   mapping (address => uint256) public stakedAmount;
-  mapping (address => uint256) public voterCount;
+  mapping (address => uint256) public voteCount;
   mapping (address => bool) public hasVoted;
 
 
@@ -115,7 +115,7 @@ contract DevContest {
       SubmissionRegistered(msg.sender);
       return true;
     }
-    
+
     /// @dev Edit submission by submitter
     /// @param _name of project submission
     /// @param _desc of project submission
@@ -198,7 +198,7 @@ contract DevContest {
 
     Submission approvedSub = submissions[_favoriteSubmission];
 
-    voterCount[msg.sender] = stakedAmount[msg.sender];
+    voteCount[msg.sender] = stakedAmount[msg.sender];
     approvedSub.votes = approvedSub.votes.add(stakedAmount[msg.sender]);
     hasVoted[msg.sender] = true;
     Voted(_favoriteSubmission, msg.sender, stakedAmount[msg.sender]);
@@ -214,8 +214,8 @@ contract DevContest {
 
     Submission approvedSub = submissions[_unfortunateSubmission];
 
-    approvedSub.votes = approvedSub.votes.sub(voterCount[msg.sender]);
-    voterCount[msg.sender] = 0;
+    approvedSub.votes = approvedSub.votes.sub(voteCount[msg.sender]);
+    voteCount[msg.sender] = 0;
     hasVoted[msg.sender] = false;
     RemovedVote(_unfortunateSubmission, msg.sender, stakedAmount[msg.sender]);
     return true;
