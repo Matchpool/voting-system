@@ -4,23 +4,19 @@ Contract meant to plug into any existing ERC20 token that wants to incentivize c
 
 ## Rules
 
-- Must call `approve` on token contract before staking
+- Must call `approve()` on token contract before staking or adding bounty
 - Contract owner sets the bounty and timeframe for challenge
 - No split votes (entire staked amount goes to choice)
-- Staked vote gets revoked if removed from contract
+- Must remove vote before removing stake
+- One submission per address
 
 ## Questions
 
-- One submission per address?
 - What if there's a 2+ tie with votes?
-
-## TODOs
-
-- gas costs too expensive
-- edit submission
-- cancel (return everything)
+- Should there be a cancel/revert for entire contest?
 
 ## Interesting additions
 
-- tournament style
-- mechanism like dash (reward people voting for winner)
+- Add timeframe for submissions then allow for voting
+- Reward people who voted for winning submission with 10% of bounty
+- Tournament style with highest votes going to next round
