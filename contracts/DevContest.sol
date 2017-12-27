@@ -241,6 +241,7 @@ contract DevContest {
     require(hasContestStarted());
     require(owner == msg.sender);
 
+
     uint256 subCount = approvedSubmissions.length;
 
     for (uint8 i= 0; i<subCount; i+=1 ) {
@@ -259,6 +260,7 @@ contract DevContest {
 
   function payout() internal {
     token.transfer(winningAddress, bounty);
+    bounty = 0;
   }
 
   /*
