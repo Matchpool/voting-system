@@ -15,7 +15,8 @@
   </head>
 
   <body>
-    <div id="navgroup" class="d-flex flex-column">
+
+    <div id="navgroup" class="d-flex flex-column"> <!-- TOP NAVIGATION -->
       <div id="nav1" class="p-2">
         <div class="d-flex"
         style="align-items: center;
@@ -30,6 +31,7 @@
           </div>
         </div>
       </div>
+
       <div id="nav2" class="p-2"></div>
 
       <div id="nav3" class="p-2">
@@ -42,7 +44,7 @@
           <div class="p-2">
             <div class="d-flex flex-column">
               <div class="p-2">Liquid Balance</div>
-              <div class="p-2">0 GUP</div>
+              <div class="p-2" id="supply">GUP</div>
             </div>
           </div>
           <div class="p-2"><img src="imgs/gup.png" height="50%"></div>
@@ -58,14 +60,13 @@
           <div class="p-2">
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-              Launch demo modal
+              STAKE GUP
             </button>
           </div>
-        </div>
-    </div>
-  </div>
+        </div> <!-- END OF TOP NAVIGATION -->
 
-    <!-- Modal for button -->
+
+    <!-- Modal for STAKE GUP button -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -86,18 +87,38 @@
       </div>
     </div>
 
-    <div class="d-flex flex-nowrap">    <!-- Div block start -->
-      <div id="sidenav" class="order-1 p-2">
-        <nav class="nav nav-pills flex-column">
-          <a class="nav-item nav-link active" data-toggle="pill" href="#" id="vote">VOTE</a>
-          <a class="nav-item nav-link" data-toggle="pill" href="#" id="submit">SUBMIT PROPOSAL</a>
-          <a class="nav-item nav-link" data-toggle="pill" href="#" id="reset">RESET CHALLENGE</a>
-        </nav>
+    <!-- Modal for SUBMIT PROPOSAL button -->
+    <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel2">Succesful SUBMISSION</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            OKAY
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
       </div>
-      <div id="content" class="order-2 p-2">
-        <div id="vote" class="content-toggle">
+    </div>
 
 
+    <div class="d-flex flex-nowrap">    <!-- SIDE NAVIGATION -->
+      <div id="sidenav" class="order-1 p-2">
+        <nav id="sidenav-inner" class="nav nav-pills flex-column" role="tablist">
+          <a class="nav-item nav-link active" data-toggle="pill" href="#vote-content" role="tab" aria-controls="vote-content" aria-selected="true" id="vote">VOTE</a>
+          <a class="nav-item nav-link" data-toggle="pill" href="#submit-content" role="tab" aria-controls="submit-content" aria-selected="false" id="submit">SUBMIT PROPOSAL</a>
+        </nav>
+      </div> <!-- END OF TOP NAVIGATION -->
+
+      <div id="content" class="order-2 p-2 tab-content"> <!-- CONTENT OF PAGE LINKED TO SIDE NAVIGATION VIA BOOTSTRAP -->
+        <div id="vote-content" class="tab-pane fade show active" role="tabpanel" aria-labelledby="vote">
           <div class="container">
             <div class="row">
               <div class="col-sm">
@@ -126,134 +147,53 @@
               </div>
             </div>
           </div>
-
-          <br><br><br>
-
-          AMOUNT / URL / INDEX
-          <input id="submission"></input>
-          ADDRESS
-          <input id="submissionAddress"></input>
-
-          <br>DevContest Contract Address: <div id="owner"></div><br>User's MPToken Balance: <div id="supply"></div><br>
-
-
-          <br><button id="buttonTokenApprove">Approve(AMOUNT)</button><br>
-          <br><button id="buttonTokenTransfer">Transfer(AMOUNT, ADDRESS)</button><br>
-
-
-
-          <br><button id="buttonStake">Stake(AMOUNT)</button>
-          <ol>
-            <li>Checks allowance for user within the contract</li>
-            <li>Ensures the AMOUNT is less than the allowance</li>
-            <li>Transfer amount ERC20 compatible token to the contract</li>
-            <li>Calls the Staked event</li>
-          </ol>
-
-          <br><button id="buttonRelease">Release Stake(AMOUNT)</button>
-          <ol>
-            <li>Ensures AMOUNT is less than the staked amount
-            <li>The user's staked amount is reduced by the AMOUNT
-            <li>The AMOUNT is transferred to the user
-            <li>Calls the StakeReleased event
-          </ol>
-
-          <br><button id="buttonRegister">Register Submission(URL)</button>
-          <ol>
-            <li>Creates a Submission object
-            <li>Add it to the submissions with an unapproved state
-          </ol>
-
-          <br><button id="buttonApprove">Approve Submission(ADDRESS, INDEX)</button>
-          <ol>
-            <li>Ensure only owner can call
-            <li>Ensure the index is valid within the list of unapproved submissions
-            <li>Creates a new approved Submission object using the ADDRESS
-            <li>Add it to list of approved submissions
-            <li>Delete the unapproved submission at INDEX
-          </ol>
-
-          <br><button id="buttonGetUn">getUnapprovedSubmissionAddresses()</button>
-          <br>
-
-          <br><button id="buttonGetAp">getApprovedSubmissionAddresses()</button>
-          <br>
-
-          <br><button id="buttonVote">Vote(ADDRESS)</button>
-          <ol>
-            <li>Checks for a staked amount</li>
-            <li>Ensures no vote
-            <li>Sets the user voter count to the stake amount
-            <li>Increases the votes for the submission
-            <li>Flags true for having voted
-          </ol>
-
-          <br><button id="buttonRemVote">Remove Vote(ADDRESS)</button>
-          <ol>
-            <li>Opposite of Vote
-            <li>Reverts the flag to false
-          </ol>
-
-          <br><button id="buttonAddBounty">Add Bounty(AMOUNT)</button>
-
-          <br><button id="buttonCompleteContest">Complete Contest</button>
-
-
         </div>
-        <div id="submit" class="content-toggle" style="display: none;">
+
+        <div id="submit-content" class="tab-pane fade" role="tabpanel" aria-labelledby="submit">
           <form class="container" id="needs-validation" novalidate>
             <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="validationCustom01">First name</label>
-                <input type="text" class="form-control" id="validationCustom01" placeholder="First name" value="Mark" required>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="validationCustom02">Last name</label>
-                <input type="text" class="form-control" id="validationCustom02" placeholder="Last name" value="Otto" required>
+              <div class="col-md-12 mb-3">
+                <label for="validationCustom01">Name</label>
+                <input type="text" class="form-control" id="validationCustom01" placeholder="Enter the name of your proposal" required>
+                <div class="invalid-feedback">
+                  Please provide a valid name.
+                </div>
               </div>
             </div>
             <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="validationCustom03">City</label>
-                <input type="text" class="form-control" id="validationCustom03" placeholder="City" required>
-                <div class="invalid-feedback">
-                  Please provide a valid city.
-                </div>
+              <div class="col-md-12 mb-3">
+                <label for="validationCustom02">Description</label>
+                <textarea rows="5" class="form-control" id="validationCustom02" placeholder="Explain a little your proposal" required></textarea>
               </div>
-              <div class="col-md-3 mb-3">
-                <label for="validationCustom04">State</label>
-                <input type="text" class="form-control" id="validationCustom04" placeholder="State" required>
+            </div>
+            <div class="row">
+              <div class="col-md-12 mb-3">
+                <label for="validationCustom03">Media</label>
+                <input type="text" class="form-control" id="validationCustom03" placeholder="Link url to any external resources about your proposal" required>
                 <div class="invalid-feedback">
-                  Please provide a valid state.
-                </div>
-              </div>
-              <div class="col-md-3 mb-3">
-                <label for="validationCustom05">Zip</label>
-                <input type="text" class="form-control" id="validationCustom05" placeholder="Zip" required>
-                <div class="invalid-feedback">
-                  Please provide a valid zip.
+                  Please provide a valid url.
                 </div>
               </div>
             </div>
-            <button class="btn btn-primary" type="submit">Submit form</button>
+            <div class="d-flex">
+              <div class="mr-auto p-2"></div>
+              <div class="p-2">
+                <button id="buttonRegister" type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal2">
+                  SUBMIT
+                </button>
+              </div>
+            </div>
           </form>
         </div>
-        <div id="reset" class="content-toggle" style="display: none;">3333</div>
+
+        <div id="reset-content" class="tab-pane fade" role="tabpanel" aria-labelledby="reset">3333</div>
+
       </div>
-    </div>    <!-- Div block end -->
+    </div>    <!-- END OF SIDE NAVIGATION CONTENT -->
 
 
 
-    <!-- Toggle displayed data -->
-    <script>
-    $("#sidenav a").click(function() {
-        var id = $(this).attr("id");
-        $("#content div.content-toggle").css("display", "none");
-        $("#content div#" + id + "").css("display", "block");
-        console.log(id);
-    });
-    </script>
-
+    <!-- VALIDATION FOR SUBMIT PROPOSAL PAGE -->
     <!-- Bootstrap example code for form validation -->
     <script>
     // Example starter JavaScript for disabling form submissions if there are invalid fields
@@ -261,7 +201,7 @@
       'use strict';
       window.addEventListener('load', function() {
         var form = document.getElementById('needs-validation');
-        form.addEventListener('submit', function(event) {
+        form.addEventListener('click', function(event) {
           if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();

@@ -78,6 +78,21 @@
   border-color: #37DCD8;
 }
 
+.btn-primary:hover {
+  background-color: #37DCD8;
+  border-color: #37DCD8;
+}
+
+.btn-primary:not([disabled]):not(.disabled).active, .btn-primary:not([disabled]):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+    background-color: #37DCD8;
+    border-color: #37DCD8;
+    box-shadow: 0 0 0 0.2rem #37dcd8;
+}
+
+.btn-primary.focus, .btn-primary:focus {
+    box-shadow: 0 0 0 0.2rem #37dcd8;
+}
+
 .btn-secondary {
   color: #1E1E4A;
   background-color: #37DCD8;
