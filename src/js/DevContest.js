@@ -1,6 +1,7 @@
 /* Web3 Setup */
 var Web3 = require('web3');
 
+/* Create web3 for Metamask interaction */
 if (typeof web3 !== 'undefined') {
   web3 = new Web3(web3.currentProvider);
 } else {
@@ -16,26 +17,69 @@ let MPToken = MPTokenContract.at(TOKEN_ADDRESS);
 /* Log to console current block number */
 web3.eth.getBlockNumber(function(error, result){ console.log("CURRENT BLOCK NUMBER:" + result) });
 
-$('#owner').html(ADDRESS);
-
 /* Attempt to refresh balance but not yet working well */
 function getBalance(){
   MPToken.balanceOf(web3.eth.accounts[0], function(error,result) {
-    $('#supply').html(result['c'][0]);
+    $('#supply').html(result['c'][0] + " GUP");
   });
 }
 getBalance();
 
-/* Contract methods binded to buttons on main page */
-let StakedEvent = DevContest.Staked();
-StakedEvent.watch(function(error, result){
-  if(!error) {
-    console.log(result.args._from);
-    console.log(result.args._value);
-  } else {
-    console.log("ERROR");
+/* If owner: display the appropriate navigation menu,
+  Must run before the toggle script */
+DevContest.owner(function(e,r){
+  if(web3.eth.accounts[0] == r){
+    console.log("OWNER CONFIRMED");
+    $('#sidenav-inner').append(`
+    <a class="nav-item nav-link" data-toggle="pill" href="#reset-content" role="tab" aria-controls="reset-content" aria-selected="false" id="reset">OWNER PANEL</a>`);
   }
+
+  $("#reset").click(function(e,r) {
+    DevContest.getUnapprovedSubmissionAddresses(function(error, result) {
+      console.log(result.length);
+      for(let i = 0; i < result.length; i++){
+
+        DevContest.submissions(result[0],function(e,r){
+          console.log(r);
+          // submission details
+          var address = r['0'];
+          var isApproved = r['1'];
+          var name = web3.toUtf8(r['2']);
+          var description = web3.toUtf8(r['3']);
+          var url = web3.toUtf8(r['4']);
+          var id = r['5'];
+          var votes = r['6'];
+          $("#reset-content").html(`
+          <strong>Address:</strong> ` + address + `<br>
+          <strong>Approval Status:</strong> `+ isApproved + `<br>
+          <strong>Proposal Name:</strong> ` + name + `<br>
+          <strong>Proposal Description:</strong> ` + description + `<br>
+          <strong>Proposal URL:</strong> ` + url + `<br>
+          <strong>Proposal ID:</strong> ` + id + `<br>
+          <strong>Votes:</strong> ` + votes + `<br>`);
+        });
+
+      }
+
+    });
+  });
 });
+
+
+
+  // let StakedEvent = DevContest.Staked();
+  // StakedEvent.watch(function(error, result){
+  //   if(!error) {
+  //     console.log(result.args._from);
+  //     console.log(result.args._value);
+  //   } else {
+  //     console.log("ERROR");
+  //   }
+  // });
+
+
+
+/* Contract methods binded to buttons on main page */
 
 /* For this version of web3 the general idea for calling a method is:
       Contract.methodName(param1, param2,..., {from: what_msg.sender_will_be}, callback);
@@ -72,9 +116,14 @@ $('#buttonRelease').click(function(error, result) {
 });
 
 $('#buttonRegister').click(function(error, result) {
-  DevContest.registerSubmission($('#submission').val(), {from: web3.eth.accounts[0]}, function(error, result) {
-    console.log(result);
-  });
+  if($('#validationCustom01').val().length != 0 && $('#validationCustom01').val() != 0 && $('#validationCustom01').val() != 0) {
+    DevContest.registerSubmission($('#validationCustom01').val(),
+                                  $('#validationCustom02').val(),
+                                  $('#validationCustom03').val(),
+                                  {from: web3.eth.accounts[0]}, function(error, result) {
+      console.log(result);
+    });
+  }
   console.log("CLICKED REGISTER SUBMISSION");
 });
 

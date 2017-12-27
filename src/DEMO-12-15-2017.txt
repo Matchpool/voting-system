@@ -35,3 +35,38 @@ Then, click the Transfer button on the UI and the Submit in Metamask. Refresh th
 23. Now open the browser console and click getUnapprovedSubmissionAddresses and copy the address
 24. Currently there is no validation whether the address is approved or not so paste the address in the second field and click 'Vote' and submit
 25. Refresh the page and check your balance. End of demo
+
+
+λ ganache-cli
+Ganache CLI v6.0.3 (ganache-core: 2.0.2)
+
+Available Accounts
+==================
+(0) 0xaa3f9db655bb4e424ba20672c56ff53b7b8c3514
+(1) 0x691258899393f03f95595df4f5590dbce50acf5a
+(2) 0xde4d5337a935101b754c5b8c508cc4348f7f89ea
+(3) 0x812e8cd358b9975b3859076b3bdbf12efaa9b5e3
+(4) 0x0621069ad3b8d1904a94042017d8909f9fb0a84d
+(5) 0x3bc51fbe9588686bb011ff97a7b205464f71a556
+(6) 0x94e94ca396806a25fc42a9c4a726d023d765ce92
+(7) 0x6400937b424c3a0906f2cb179011fff63b438ba0
+(8) 0xc286714f92f3816e3213929e6c380edfb880814f
+(9) 0x4705b113931e959bae28efed68150572baf65e69
+
+Private Keys
+==================
+(0) 38d7ccf8298e83f28f093033aeb514fbec396f93cf14e99f2813208f301593e0
+(1) 742847f2376c75e0bd975f6c6872bb9dc941339bf21d66eddd157d1dcb006883
+(2) 03b1815c070cb478912a1bb920580448ccd0cb6d8d62e46bf1f877640a41e6c2
+(3) e80169b45643ce5bcddbd5eb41e269add20804c0cc831db7706db700923b56a1
+(4) 39c07def016e19be0841fd7b26003efb755150922534f2f22bf3ac090918194d
+(5) 5c728cb511366d69afded4f7e6090cd1b5eb38f6756dc793d9919255bc442ad3
+(6) e9eb7c75cf1ee9776ce601b2baa0f928c91c0a75e8bf7fb9488723da32c493ff
+(7) 75094a81598ce215d9f24064244936d127ec59ce7b973cd3818a152fd2c7f313
+(8) 07cfa732cc111b86a698dafc2224c7ffca70289877c239a029e9d042e567006a
+(9) 0a511538918c7d9fe0afe8f300be0bcc76909d73637026679768c68141bba569
+
+HD Wallet
+==================
+Mnemonic:      stamp kitchen cotton van whip razor reflect coil anger advance grow adapt
+Base HD Path:  m/44'/60'/0'/0/{account_index}
