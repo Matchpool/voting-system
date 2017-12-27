@@ -8,6 +8,7 @@ Contract meant to plug into any existing ERC20 token that wants to incentivize c
 - Contract owner sets the bounty and timeframe for challenge
 - No split votes (entire staked amount goes to choice)
 - Must remove vote before removing stake
+- If you stake more tokens after voting, you must remove your vote before that new staked amount can count towards a vote
 - One submission per address
 
 ## Questions
