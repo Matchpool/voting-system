@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Test</title>
+    <title>Contest</title>
     <!-- Bootstrap -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
@@ -16,17 +16,16 @@
 
   <body>
 
-    <div id="navgroup" class="d-flex flex-column"> <!-- TOP NAVIGATION -->
+    <!-- TOP NAVIGATION -->
+    <div id="navgroup" class="d-flex flex-column">
       <div id="nav1" class="p-2">
-        <div class="d-flex"
-        style="align-items: center;
-          width: 100%;
-          height: 100%;">
-          <div class="mr-auto p-2"><img src="imgs/logo.png" height="100%">000 (PRIZE) MATCHPOOL DEVELOPMENT CHALLENGE</div>
-          <div class="p-2">
-            <div class="d-flex flex-column">
-              <div class="p-2">8 : 6 : 54 : 35</div>
-              <div class="p-2">TIME UNTIL CONTEST ENDS</div>
+        <div class="d-flex">
+          <div><img src="imgs/logo.png" height="145%"></div>
+          <div class="mr-auto" style="color: black; font-size: 0.9rem; margin-top:12px; font-family:brandon_grotesquebold; letter-spacing:2px"><span id="displaybounty" style="font-family:brandon_grotesquebold;"></span> (PRIZE) MATCHPOOL DEVELOPMENT CHALLENGE</div>
+          <div>
+            <div class="d-flex flex-column" style="align-items: flex-end;">
+              <div><span id="remaining"></span> BLOCKS LEFT</div>
+              <div><span id="time"></span> APPROXIMATE TIME LEFT</div>
             </div>
           </div>
         </div>
@@ -35,118 +34,115 @@
       <div id="nav2" class="p-2"></div>
 
       <div id="nav3" class="p-2">
-        <div class="d-flex"
-        style="align-items: center;
-          width: 100%;
-          height: 100%;">
-          <div class="mr-auto p-2">VOTING DASHBOARD</div>
-          <div class="p-2" style="opacity:0;">Invisible spacing xD</div>
+        <div class="d-flex">
+          <div class="p-2" style="width: 30px"></div>
+          <div class="mr-auto p-2" style="font-size:xx-large">VOTING DASHBOARD</div>
           <div class="p-2">
             <div class="d-flex flex-column">
-              <div class="p-2">Liquid Balance</div>
-              <div class="p-2" id="supply">GUP</div>
+              <div style="font-size:x-small">LIQUID BALANCE</div>
+              <div style="font-family:brandon_grotesquebold;"><span id="supply" style="font-family:brandon_grotesquebold;"></span> GUP</div>
             </div>
           </div>
           <div class="p-2"><img src="imgs/gup.png" height="50%"></div>
-          <div class="p-2" style="opacity:0;">spacing xD</div>
+
+          <div class="p-2" style="width: 100px"></div>
+
           <div class="p-2">
             <div class="d-flex flex-column">
-              <div class="p-2">Locked Stake</div>
-              <div class="p-2">0.00 GUP</div>
+              <div style="font-size:x-small">LOCKED STAKE</div>
+              <div style="font-family:brandon_grotesquebold;"><span id="lockedstake" style="font-family:brandon_grotesquebold;"></span> GUP</div>
             </div>
           </div>
           <div class="p-2"><img src="imgs/lock.png" height="50%"></div>
-          <div class="p-2" style="opacity:0;">Invisible spacing xD</div>
+
+          <div class="p-2" style="width: 100px"></div>
+
           <div class="p-2">
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#stakeModal">
               STAKE GUP
             </button>
           </div>
-        </div> <!-- END OF TOP NAVIGATION -->
+          <div class="p-2" style="width: 60px"></div>
+
+        </div>
+      </div>
+    </div>
+    <!-- END OF TOP NAVIGATION -->
 
 
     <!-- Modal for STAKE GUP button -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="stakeModal" tabindex="-1" role="dialog" aria-labelledby="stakeModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">STAKE GUP</h5>
+            <h5 class="modal-title" id="stakeModalLabel">STAKE GUP</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            For voting on proposals. You can change it at any time, but it will be locked during proposal reveal periods until you reveal your votes.
+            <div style="height: 20px"></div>
+            <p>First type in how much you want to stake and click the checkbox to set the allowed amount that the contract can stake on your behalf, and then stake. (Metamask transactions will be incurred. NOTE: The allowance will be replaced if you set it to a new value)</p>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <button class="btn btn-outline-secondary" id="approveCb" type="button">SET ALLOWANCE</button>
+              </div>
+              <input type="text" id="approveInput" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+            </div>
+          </div>
+          <div>
+            <div class="col-12">
+              <span id="allowance"></span> GUP
+            </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+              <div class="col-6">
+                <button type="button" id="stake" class="btn btn-outline-secondary" data-dismiss="modal">STAKE</button>
+              </div>
+              <div class="col-6">
+                <button type="button" id="buttonRelease" class="btn btn-outline-secondary" data-dismiss="modal">RELEASE STAKE</button>
+              </div>
           </div>
         </div>
       </div>
     </div>
+    <!-- END OF Modal for STAKE GUP button -->
+
 
     <!-- Modal for SUBMIT PROPOSAL button -->
-    <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    <div class="modal fade" id="submitModal" tabindex="-1" role="dialog" aria-labelledby="submitModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel2">Succesful SUBMISSION</h5>
+            <h5 class="modal-title" id="submitModalLabel">SUCCESSFUL SUBMISSION</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <div class="modal-body">
-            OKAY
-          </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
     </div>
+    <!-- END OF Modal for SUBMIT PROPOSAL button -->
 
 
-    <div class="d-flex flex-nowrap">    <!-- SIDE NAVIGATION -->
-      <div id="sidenav" class="order-1 p-2">
+    <div class="d-flex flex-nowrap">
+       <!-- SIDE NAVIGATION -->
+      <div id="sidenav" class="order-1">
         <nav id="sidenav-inner" class="nav nav-pills flex-column" role="tablist">
           <a class="nav-item nav-link active" data-toggle="pill" href="#vote-content" role="tab" aria-controls="vote-content" aria-selected="true" id="vote">VOTE</a>
           <a class="nav-item nav-link" data-toggle="pill" href="#submit-content" role="tab" aria-controls="submit-content" aria-selected="false" id="submit">SUBMIT PROPOSAL</a>
         </nav>
-      </div> <!-- END OF TOP NAVIGATION -->
+      </div>
+      <!-- END OF SIDE NAVIGATION -->
 
-      <div id="content" class="order-2 p-2 tab-content"> <!-- CONTENT OF PAGE LINKED TO SIDE NAVIGATION VIA BOOTSTRAP -->
+      <!-- CONTENT OF PAGE LINKED TO SIDE NAVIGATION VIA BOOTSTRAP -->
+      <div id="content" class="order-2 tab-content">
         <div id="vote-content" class="tab-pane fade show active" role="tabpanel" aria-labelledby="vote">
-          <div class="container">
-            <div class="row">
-              <div class="col-sm">
-                <div class="d-flex">
-                  <div class="mr-auto p-2">Proposal</div>
-                  <div class="p-2"><img src="imgs/idea.png" height="20%"></div>
-                  <div class="p-2" style="opacity:0;">Invisible spacing</div>
-                </div>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                <div class="d-flex">
-                  <div class="mr-auto p-2"></div>
-                  <div class="p-2"><button type="button" class="btn btn-secondary">Vote</button></div>
-                </div>
-              </div>
-              <div class="col-sm">
-                <div class="d-flex">
-                  <div class="mr-auto p-2">Proposal</div>
-                  <div class="p-2"><img src="imgs/idea.png" height="20%"></div>
-                  <div class="p-2" style="opacity:0;">Invisible spacing</div>
-                </div>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                <div class="d-flex">
-                  <div class="mr-auto p-2"></div>
-                  <div class="p-2"><button type="button" class="btn btn-secondary">Vote</button></div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div class="container"></div>
         </div>
 
         <div id="submit-content" class="tab-pane fade" role="tabpanel" aria-labelledby="submit">
@@ -154,7 +150,7 @@
             <div class="row">
               <div class="col-md-12 mb-3">
                 <label for="validationCustom01">Name</label>
-                <input type="text" class="form-control" id="validationCustom01" placeholder="Enter the name of your proposal" required>
+                <input type="text" pattern=".{1,32}" class="form-control" id="validationCustom01" placeholder="Enter the name of your proposal" required>
                 <div class="invalid-feedback">
                   Please provide a valid name.
                 </div>
@@ -163,13 +159,13 @@
             <div class="row">
               <div class="col-md-12 mb-3">
                 <label for="validationCustom02">Description</label>
-                <textarea rows="5" class="form-control" id="validationCustom02" placeholder="Explain a little your proposal" required></textarea>
+                <textarea rows="5" maxlength="256" minlength="32" class="form-control" id="validationCustom02" placeholder="Explain a little your proposal" required></textarea>
               </div>
             </div>
             <div class="row">
               <div class="col-md-12 mb-3">
                 <label for="validationCustom03">Media</label>
-                <input type="text" class="form-control" id="validationCustom03" placeholder="Link url to any external resources about your proposal" required>
+                <input type="text" pattern=".{1,32}" class="form-control" id="validationCustom03" placeholder="Link url to any external resources about your proposal" required>
                 <div class="invalid-feedback">
                   Please provide a valid url.
                 </div>
@@ -178,7 +174,7 @@
             <div class="d-flex">
               <div class="mr-auto p-2"></div>
               <div class="p-2">
-                <button id="buttonRegister" type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal2">
+                <button id="buttonRegister" type="button" class="btn btn-secondary" data-toggle="modal" data-target="#submitModal">
                   SUBMIT
                 </button>
               </div>
@@ -186,30 +182,32 @@
           </form>
         </div>
 
-        <div id="reset-content" class="tab-pane fade" role="tabpanel" aria-labelledby="reset">3333</div>
-
+        <div id="reset-content" class="tab-pane fade" role="tabpanel" aria-labelledby="reset">
+          <div class="container"></div>
+        </div>
       </div>
-    </div>    <!-- END OF SIDE NAVIGATION CONTENT -->
-
-
+      <!-- END OF CONTENT OF PAGE LINKED TO SIDE NAVIGATION VIA BOOTSTRAP  -->
+    </div>
 
     <!-- VALIDATION FOR SUBMIT PROPOSAL PAGE -->
-    <!-- Bootstrap example code for form validation -->
     <script>
-    // Example starter JavaScript for disabling form submissions if there are invalid fields
     (function() {
       'use strict';
       window.addEventListener('load', function() {
-        var form = document.getElementById('needs-validation');
-        form.addEventListener('click', function(event) {
-          if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-          form.classList.add('was-validated');
-        }, false);
+        checkIfValid();
       }, false);
     })();
+
+    function checkIfValid() {
+      var form = document.getElementById('needs-validation');
+      form.addEventListener('click', function(event) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    }
     </script>
 
   <!-- JS to interact with smart contracts -->

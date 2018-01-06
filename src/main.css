@@ -1,3 +1,53 @@
+@font-face {
+    font-family: 'brandon_grotesquebold_italic';
+    src: url('fonts/brandon_webfontkit/brandon_bld_it-webfont.woff2') format('woff2'),
+         url('fonts/brandon_webfontkit/brandon_bld_it-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'brandon_grotesquelight_italic';
+    src: url('fonts/brandon_webfontkit/brandon_light_it-webfont.woff2') format('woff2'),
+         url('fonts/brandon_webfontkit/brandon_light_it-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'brandon_grotesqueMdIt';
+    src: url('fonts/brandon_webfontkit/brandon_med_it-webfont.woff2') format('woff2'),
+         url('fonts/brandon_webfontkit/brandon_med_it-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'brandon_grotesquebold';
+    src: url('fonts/brandon_webfontkit/brandon_bld-webfont.woff2') format('woff2'),
+         url('fonts/brandon_webfontkit/brandon_bld-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'brandon_grotesquelight';
+    src: url('fonts/brandon_webfontkit/brandon_light-webfont.woff2') format('woff2'),
+         url('fonts/brandon_webfontkit/brandon_light-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'brandon_grotesquemedium';
+    src: url('fonts/brandon_webfontkit/brandon_med-webfont.woff2') format('woff2'),
+         url('fonts/brandon_webfontkit/brandon_med-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+*{font-family:brandon_grotesquemedium;}
+
 /* Main Cointainers */
 #navgroup {
   position: fixed;
@@ -8,8 +58,15 @@
 
 #nav1 {
   height: 40%;
-  padding-left: 10px!important;
-  padding-right: 60px!important;
+}
+
+#nav1 .d-flex{
+  padding-left: 10px;
+  padding-right: 40px;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
 }
 
 #nav2 {
@@ -18,18 +75,37 @@
 }
 
 #nav3 {
-  padding-left: 30px!important;
+  letter-spacing: 1px;
   height: 40%;
-  padding-right: 60px!important;
+}
+
+#nav3 .d-flex {
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  padding: 0rem;
+  padding-right: 0.05rem;
+}
+
+#nav3 button {
+  height: 50px;
+  width: 220px;
+}
+
+#nav3 img {
+  margin-bottom: 20px;
 }
 
 #sidenav {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.1);
   position: fixed;
   top: 20%;
   height: 100%;
   width: 16%;
   z-index: 1;
+  font-size: small;
+  letter-spacing: 2px;
 }
 
 #content {
@@ -40,23 +116,20 @@
   width: 100%;
   background-color: #F4F4F4;
   overflow-y: scroll;
-  padding-left: 4%!important;
-  padding-top: 5%!important;
-  padding-bottom: 20%!important;
+  padding-left: 4%;
+  padding-top: 5%;
+  padding-bottom: 20%;
 }
 
 /* Bootstrap adjustments */
 .nav-pills {
   margin-top: 20%;
 }
-.p-2 {
-  padding: 0rem!important;
-  padding-right: 0.05rem!important;
-}
+
 .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
   background-color: #1E1E4A;
   color: #37DCD8;
-  padding-left: 12%!important;
+  padding-left: 12%;
 }
 
 .nav-pills .nav-link{
@@ -93,10 +166,50 @@
     box-shadow: 0 0 0 0.2rem #37dcd8;
 }
 
+.btn-outline-secondary {
+  color: white;
+  border-color: #37DCD8;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #37DCD8;
+  border-color: #37DCD8;
+}
+
+.btn-outline-secondary:not([disabled]):not(.disabled).active, .btn-primary:not([disabled]):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+    background-color: #37DCD8;
+    border-color: #37DCD8;
+    box-shadow: 0 0 0 0.2rem #37dcd8;
+}
+
+.btn-outline-secondary.focus, .btn-primary:focus {
+    box-shadow: 0 0 0 0.2rem #37dcd8;
+}
+
+
+.btn-secondary:hover {
+  background-color: #37DCD8;
+  border-color: black;
+}
+
+.btn-secondary:not([disabled]):not(.disabled).active, .btn-primary:not([disabled]):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+    background-color: #37DCD8;
+    border-color: black;
+    box-shadow: 0 0 0 0.2rem #37dcd8;
+}
+
+.btn-secondary.focus, .btn-primary:focus {
+    box-shadow: 0 0 0 0.2rem #37dcd8;
+}
+
 .btn-secondary {
+  font-family:brandon_grotesquebold;
+  letter-spacing: 2px;
+  padding: 0.8rem;
   color: #1E1E4A;
   background-color: #37DCD8;
   border-color: #37DCD8;
+  font-size: 0.7rem;
 }
 
 .container {
@@ -105,15 +218,86 @@
   margin: 0px;
 }
 
+.modal-content .col-12 {
+  text-align: center;
+}
+
 .modal-dialog {
   max-width: 600px;
-  margin: 30% 22% 1% 35%;
+  margin: 20% 22% 1% 35%;
 }
 
 .modal-header {
   border-bottom: 0px;
 }
 
+.modal-title {
+  margin-top: 50px;
+  font-size: 1.6rem;
+}
+
+.modal-body {
+  margin-top: -50px;
+  padding-top: 0px;
+  padding: 15px 15px 0px 15px;
+}
+
 .modal-footer {
   border-top: 0px;
+}
+
+.modal-footer .col-6 button{
+  height: 50px;
+  width:100%;
+}
+
+.modal-content .col-12 {
+  font-family: brandon_grotesquebold;
+  letter-spacing: 2px;
+  font-size: xx-large;
+  margin-top: 25px;
+  margin-bottom: 25px;
+  color: rgba(67, 220, 215, 0.22);
+}
+
+#allowance {
+  font-family: brandon_grotesquebold;
+  letter-spacing: 2px;
+  font-size: xx-large;
+  margin-top: 25px;
+  margin-bottom: 25px;
+  color: rgba(67, 220, 215, 0.22);
+}
+
+#vote-content {
+  margin-left: 6%;
+  margin-top: 3%;
+}
+
+#reset-content {
+  margin-left: 6%;
+  margin-top: -3%;
+}
+
+#reset-content .list-group-item {
+  font-size: 0.8rem;
+  padding: 0.4rem;
+  color: #37DCD8;
+  background-color: #1E1E4A;
+  margin-bottom: 5px;
+  word-break: break-all;
+  border-radius: 0.2rem;
+}
+
+#reset-content .list-group-item span{
+  color: white;
+}
+
+#reset-content .list-group {
+  margin-left: 5%;
+  width: 62%;
+}
+
+#reset-content .col-6 button {
+  margin-left: 70%;
 }
