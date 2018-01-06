@@ -1,177 +1,446 @@
-/* Web3 Setup */
-var Web3 = require('web3');
-
-/* Create web3 for Metamask interaction */
-if (typeof web3 !== 'undefined') {
-  web3 = new Web3(web3.currentProvider);
-} else {
-  web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-}
-
-/* Contract and Events */
-let DevContestContract = web3.eth.contract(ABI);
-let MPTokenContract = web3.eth.contract(TOKEN_ABI);
-let DevContest = DevContestContract.at(ADDRESS);
-let MPToken = MPTokenContract.at(TOKEN_ADDRESS);
-
-/* Log to console current block number */
-web3.eth.getBlockNumber(function(error, result){ console.log("CURRENT BLOCK NUMBER:" + result) });
-
-/* Attempt to refresh balance but not yet working well */
-function getBalance(){
-  MPToken.balanceOf(web3.eth.accounts[0], function(error,result) {
-    $('#supply').html(result['c'][0] + " GUP");
-  });
-}
-getBalance();
-
-/* If owner: display the appropriate navigation menu,
-  Must run before the toggle script */
-DevContest.owner(function(e,r){
-  if(web3.eth.accounts[0] == r){
-    console.log("OWNER CONFIRMED");
-    $('#sidenav-inner').append(`
-    <a class="nav-item nav-link" data-toggle="pill" href="#reset-content" role="tab" aria-controls="reset-content" aria-selected="false" id="reset">OWNER PANEL</a>`);
-  }
-
-  $("#reset").click(function(e,r) {
-    DevContest.getUnapprovedSubmissionAddresses(function(error, result) {
-      console.log(result.length);
-      for(let i = 0; i < result.length; i++){
-
-        DevContest.submissions(result[0],function(e,r){
-          console.log(r);
-          // submission details
-          var address = r['0'];
-          var isApproved = r['1'];
-          var name = web3.toUtf8(r['2']);
-          var description = web3.toUtf8(r['3']);
-          var url = web3.toUtf8(r['4']);
-          var id = r['5'];
-          var votes = r['6'];
-          $("#reset-content").html(`
-          <strong>Address:</strong> ` + address + `<br>
-          <strong>Approval Status:</strong> `+ isApproved + `<br>
-          <strong>Proposal Name:</strong> ` + name + `<br>
-          <strong>Proposal Description:</strong> ` + description + `<br>
-          <strong>Proposal URL:</strong> ` + url + `<br>
-          <strong>Proposal ID:</strong> ` + id + `<br>
-          <strong>Votes:</strong> ` + votes + `<br>`);
-        });
-
-      }
-
-    });
-  });
-});
-
-
-
-  // let StakedEvent = DevContest.Staked();
-  // StakedEvent.watch(function(error, result){
-  //   if(!error) {
-  //     console.log(result.args._from);
-  //     console.log(result.args._value);
-  //   } else {
-  //     console.log("ERROR");
-  //   }
-  // });
-
-
-
-/* Contract methods binded to buttons on main page */
-
+"use strict"
 /* For this version of web3 the general idea for calling a method is:
-      Contract.methodName(param1, param2,..., {from: what_msg.sender_will_be}, callback);
+      Contract.methodName(param1, param2,..., {from: what_msg.sender_will_be}, callback)
 */
-$('#buttonTokenApprove').click(function(error, result) {
-  MPToken.approve(ADDRESS, $('#submission').val(), {from: web3.eth.accounts[0]}, function(error, result) {
-    console.log(result);
-  });
-  console.log("CLICKED APPROVE");
-});
 
-$('#buttonTokenTransfer').click(function(error, result) {
-  MPToken.transfer($('#submissionAddress').val(), $('#submission').val(), {from: web3.eth.accounts[0]}, function(error, result) {
-    console.log(result);
-    location.reload();
-  });
-  console.log("CLICKED APPROVE");
-});
+/* Promise wrapper using currying */
+const promisify = (inner) =>
+    new Promise((resolve, reject) =>
+        inner((err, res) => {
+            if (err) {
+                reject(err)
+            } else {
+                resolve(res)
+            }
+        })
+    )
 
+function timeRemaining(delta) {
+  // calculate (and subtract) whole days
+  const days = Math.floor(delta / 86400)
+  delta -= days * 86400
 
-$('#buttonStake').click(function(error, result) {
-  DevContest.stake($('#submission').val(), {from: web3.eth.accounts[0]}, function(error, result) {
-    console.log(result);
-  });
-  console.log("CLICKED STAKE");
+  // calculate (and subtract) whole hours
+  const hours = Math.floor(delta / 3600) % 24
+  delta -= hours * 3600
 
-});
+  // calculate (and subtract) whole minutes
+  const minutes = Math.floor(delta / 60) % 60
+  delta -= minutes * 60
 
-$('#buttonRelease').click(function(error, result) {
-  DevContest.releaseStake($('#submission').val(), {from: web3.eth.accounts[0]}, function(error, result) {
-    console.log(result);
-  });
-  console.log("CLICKED RELEASE STAKE");
-});
+  // what's left is seconds
+  const seconds = delta % 60
+  $('#time').html( days + " : " +
+                        hours + " : " +
+                        minutes + " : " +
+                        seconds + " - ")
+}
 
-$('#buttonRegister').click(function(error, result) {
-  if($('#validationCustom01').val().length != 0 && $('#validationCustom01').val() != 0 && $('#validationCustom01').val() != 0) {
-    DevContest.registerSubmission($('#validationCustom01').val(),
-                                  $('#validationCustom02').val(),
-                                  $('#validationCustom03').val(),
-                                  {from: web3.eth.accounts[0]}, function(error, result) {
-      console.log(result);
-    });
+async function blocksRemaining() {
+  // get current block number
+  const current = promisify(cb => web3.eth.getBlockNumber(cb))
+
+  // get the end block
+  const end = promisify(cb => DevContest.endBlock(cb))
+
+  const remaining = await end - await current
+  $('#remaining').html(remaining)
+
+  // calculate time by multiplying remaining amount of blocks
+  // with an averaged constant represent time it takes to mine a block
+  timeRemaining(remaining * 15)
+}
+
+/* Get the balances from the contracts and display them on the UI */
+async function loadBalances() {
+  const supply = await promisify(cb => MPToken.balanceOf(userAccount, cb))
+  const lockedstake = await promisify(cb => DevContest.stakedAmount(userAccount, cb))
+  const allowance = await promisify(cb => MPToken.allowance(userAccount, CONTEST_ADDRESS, cb))
+  const bounty = await promisify(cb => DevContest.bounty(cb))
+  try {
+    $('#supply').html(supply['c'][0])
+    $('#lockedstake').html(lockedstake['c'][0])
+    $('#allowance').html(allowance['c'][0])
+    if(allowance['c'][0] == 0) {
+      $("#stake").prop( "disabled", true )
+    }
+    if(allowance['c'][0] > 0) {
+      $('#allowance').attr('style','color: #37DCD8')
+      $(".modal-content .col-12").attr('style','color: #37DCD8')
+    }
+    $('#displaybounty').html(bounty['c'][0])
+  } catch (error) {
+    console.log(error)
   }
-  console.log("CLICKED REGISTER SUBMISSION");
-});
+}
 
-$('#buttonApprove').click(function(error, result) {
-  DevContest.approveSubmission($('#submissionAddress').val(), $('#submission').val(), {from: web3.eth.accounts[0]}, function(error, result) {
-    console.log(result);
-  });
-  console.log("CLICKED APPROVE SUBMISSION");
-});
+/* Load Approved Submissions From DevContest Contract */
+async function loadApprovedSubmissions() {
+  const getApprovedSubmissionAddresses = await promisify(cb => DevContest.getApprovedSubmissionAddresses(cb))
+  const hasVoted = await promisify(cb => DevContest.hasVoted(userAccount, cb))
+  const votedOn = await promisify(cb => DevContest.votedOn(userAccount, cb))
 
-$('#buttonGetUn').click(function(error, result) {
-  DevContest.getUnapprovedSubmissionAddresses(function(error, result) {
-    console.log(result);
-  });
-  console.log("CLICKED GET UNAPPROVED SUBMISSIONS");
-});
+  // Message when no proposals exist
+  if(getApprovedSubmissionAddresses.length == 0) $("#vote-content div.container").append(`No approved proposals exist yet`)
 
-$('#buttonGetAp').click(function(error, result) {
-  DevContest.getApprovedSubmissionAddresses(function(error, result) {
-    console.log(result);
-  });
-  console.log("CLICKED GET APPROVED SUBMISSIONS");
-});
+  // Otherwise populate UI with proposals
+  for(let i = 0; i < getApprovedSubmissionAddresses.length; i++) {
+      const proposal = await promisify(cb => DevContest.submissions(getApprovedSubmissionAddresses[i], cb))
 
-$('#buttonVote').click(function(error, result) {
-  DevContest.vote($('#submissionAddress').val(), {from: web3.eth.accounts[0]}, function(error, result) {
-    console.log(result);
-  });
-  console.log("CLICKED VOTE");
-});
+      const address = proposal['0']
+      const isApproved = proposal['1']
+      const name = web3.toUtf8(proposal['2'])
+      const description = web3.toUtf8(proposal['3'])
+      const url = web3.toUtf8(proposal['4'])
+      const id = proposal['5']
+      const votes = proposal['6']
+      createApprovedSubmissionsFromLoop(i, name, description, url, hasVoted, id, address, votedOn)
+  }
 
-$('#buttonRemVote').click(function(error, result) {
-  DevContest.removeVote($('#submissionAddress').val(), {from: web3.eth.accounts[0]}, function(error, result) {
-    console.log(result);
-  });
-  console.log("CLICKED REMOVE VOTE");
-});
+  // Call appropriate voting functionality
+  $('button[id^="buttonVote"]').click(function() {
+    const thisId = $(this).attr('id').match(/\d+$/)[0]
+    const thisAddress = $("#approvedProposal" + thisId).attr('class')
+    if(hasVoted) {
+      promisify(cb => DevContest.removeVote(thisAddress, {from: userAccount}, cb))
+    } else {
+      promisify(cb => DevContest.vote(thisAddress, {from: userAccount}, cb))
+    }
+  })
+}
 
-$('#buttonAddBounty').click(function(error, result) {
-  DevContest.addBounty($('#submission').val(), {from: web3.eth.accounts[0]}, function(error, result) {
-    console.log(result);
-  });
-  console.log("CLICKED ADD BOUNTY");
-});
+/* Load Unapproved Submissions From DevContest Contract */
+async function loadUnapprovedSubmissions() {
+  const owner = await promisify(cb => DevContest.owner(cb))
+  const getUnapprovedSubmissionAddresses = await promisify(cb => DevContest.getUnapprovedSubmissionAddresses(cb))
 
-$('#buttonCompleteContest').click(function(error, result) {
-  DevContest.completeContest({from: web3.eth.accounts[0]}, function(error, result) {
-    console.log(result);
-  });
-  console.log("CLICKED COMPLETE CONTEST");
-});
+  if(userAccount == owner) {
+    createOwnerNav()
+
+    // Owner specific functionality for increasing bounty and completion of the contest
+    $('#buttonAddBounty').click(() => promisify(cb => DevContest.addBounty($('#bounty').val(), {from: userAccount}, cb)))
+    $('#buttonCompleteContest').click(() => promisify(cb => DevContest.completeContest({from: userAccount}, cb)))
+
+    // Message when no proposals exist
+    if(getUnapprovedSubmissionAddresses.length == 0) $("#reset-content div.container").append(`No proposals exist yet`)
+
+    // Otherwise populate UI with proposals
+    for(let i = 0; i < getUnapprovedSubmissionAddresses.length; i++) {
+        const proposal = await promisify(cb => DevContest.submissions(getUnapprovedSubmissionAddresses[i], cb))
+        const address = proposal['0']
+        const isApproved = proposal['1']
+        const name = web3.toUtf8(proposal['2'])
+        const description = web3.toUtf8(proposal['3'])
+        const url = web3.toUtf8(proposal['4'])
+        const id = proposal['5']
+        const votes = proposal['6']
+        createUnapprovedSubmissionsFromLoop(i, name, description, isApproved, url, id, votes, address)
+    }
+
+    // Approve functionality
+    $('button[id^="buttonApprove"]').click(function() {
+      const thisId = $(this).attr('id').match(/\d+$/)[0]
+      const thisAddress = $("#unapprovedProposal" + thisId).attr('class')
+      promisify(cb => DevContest.approveSubmission(thisAddress, thisId, {from: userAccount}, cb))
+    })
+  }
+}
+
+/* Determine whether to create or edit a submission */
+async function handleSubmission() {
+  const submission = await promisify(cb => DevContest.submissions(userAccount, cb))
+  const hasSubmitted = await promisify(cb => DevContest.hasSubmitted(userAccount, cb))
+
+  if(userAccount == submission[0]) {
+    const proposal = await promisify(cb => DevContest.submissions(submission[0], cb))
+    const name = web3.toUtf8(proposal['2'])
+    const description = web3.toUtf8(proposal['3'])
+    const url = web3.toUtf8(proposal['4'])
+    $('#submit').html('EDIT PROPOSAL')
+    $('#validationCustom01').attr('value', name)
+    $('#validationCustom02').html(description)
+    $('#validationCustom03').attr('value', url)
+  }
+  /* Submitting a proposal */
+  $('#buttonRegister').click(() => {
+    if(!hasSubmitted && $('#validationCustom01').val().length != 0 && $('#validationCustom01').val().length <= 32
+    && $('#validationCustom02').val().length >= 32 && $('#validationCustom02').val().length <= 256
+    && $('#validationCustom03').val().length != 0 && $('#validationCustom03').val().length <= 32) {
+      registerSubmission()
+    } else if($('#validationCustom01').val().length != 0 && $('#validationCustom01').val().length < 32
+    && $('#validationCustom02').val().length >= 32 && $('#validationCustom02').val().length <= 256
+    && $('#validationCustom03').val().length != 0 && $('#validationCustom03').val().length <= 32) {
+      editSubmission()
+    }
+  })
+}
+
+/* Functions for creating dom elements on page via jQuery to clean code up a bit */
+function createOwnerNav() {
+  $('<a />')
+      .text('OWNER PANEL')
+      .attr('href', '#reset-content')
+      .attr('class', "nav-item nav-link")
+      .attr('data-toggle', 'pill')
+      .attr('role', 'tab')
+      .attr('aria-controls', 'reset-content')
+      .attr('aria-selected', 'false')
+      .attr('id', 'reset')
+      .appendTo('#sidenav-inner')
+
+  const div_row = $('<div/>')
+    .attr('class', 'row')
+    .appendTo("#reset-content div.container")
+  const div_col5_empty = $('<div/>')
+    .attr('class', 'col-5')
+    .appendTo(div_row)
+  const div_col4 = $('<div/>')
+    .attr('class', 'col-4')
+    .appendTo(div_row)
+  const div_col2 = $('<div/>')
+    .appendTo(div_row)
+  const div_col1_empty = $('<div/>')
+    .attr('class', 'col-1')
+    .appendTo(div_row)
+  const div_input_group = $('<div/>')
+    .attr('class', "input-group mb-3")
+    .attr('style',"padding-bottom: 60px;")
+    .appendTo(div_col4)
+  const div_input_group_prepend = $('<div/>')
+    .attr('class', "input-group-prepend")
+    .appendTo(div_input_group)
+  const input = $('<input/>')
+    .attr('type', 'text')
+    .attr('id', 'bounty')
+    .attr('class', 'form-control')
+    .attr('aria-describedby', 'basic-addon1')
+    .appendTo(div_input_group)
+  const button1 = $('<button/>')
+    .text("ADD BOUNTY:")
+    .attr('class', "btn btn-secondary")
+    .attr('id', 'buttonAddBounty')
+    .attr('type', 'button')
+    .appendTo(div_input_group_prepend)
+  const button2 = $('<button/>')
+    .text("COMPLETE PAYOUT")
+    .attr('class', "btn btn-secondary")
+    .attr('id', 'buttonCompleteContest')
+    .attr('type', 'button')
+    .appendTo(div_col2)
+}
+
+function createUnapprovedSubmissionsFromLoop(i, name, description, isApproved, url, id, votes, address) {
+  if(i % 2 == 0) {
+    let div_row_i = $('<div/>')
+      .attr('class', 'row dumb'+i)
+      .appendTo("#reset-content div.container")
+  }
+
+  const div_col6 = $('<div/>')
+    .attr('class', 'col-6')
+    .attr('style', 'padding-bottom: 40px;')
+    .appendTo(`#reset-content div.container div.row.dumb` + (i%2 == 0 ? i : i-1))
+
+  const div_d_flex_column = $('<div/>')
+    .attr('class', "d-flex flex-column")
+    .appendTo(div_col6)
+  const div_d_flex1 = $('<div/>')
+    .text(name.toUpperCase())
+    .attr('style', 'padding-bottom: 20px; font-family:brandon_grotesquebold; font-size:1.1rem;')
+    .appendTo(div_d_flex_column)
+
+  const div_d_flex2 = $('<div/>')
+    .text(description)
+    .attr('style', 'padding-bottom: 12px; font-family:brandon_grotesquelight; color: rgb(182, 182, 182); font-size:0.8rem; font-weight:800; text-align:justify;')
+    .appendTo(div_d_flex_column)
+
+  const div_d_flex3 = $('<div/>')
+    .text(url)
+    .attr('style', 'padding-bottom: 12px;')
+    .appendTo(div_d_flex_column)
+
+  const div_d_flex4 = $('<div/>')
+    .appendTo(div_d_flex_column)
+  const ul = $('<ul/>')
+    .attr('class', 'list-group')
+    .appendTo(div_d_flex4)
+  const li_address = $('<li/>')
+    .text("ADDRESS: ")
+    .attr('class', 'list-group-item')
+    .appendTo(ul)
+  const span_address = $('<span/>')
+    .text(address)
+    .appendTo(li_address)
+  const li_status = $('<li/>')
+    .text("APPROVAL STATUS: ")
+    .attr('class', 'list-group-item')
+    .appendTo(ul)
+  const span_status = $('<span/>')
+    .text(isApproved)
+    .appendTo(li_status)
+  const li_id = $('<li/>')
+    .text("PROPOSAL ID: ")
+    .attr('class', 'list-group-item')
+    .appendTo(ul)
+  const span_id = $('<span/>')
+    .text(id)
+    .appendTo(li_id)
+  const li_votes = $('<li/>')
+    .text("VOTES: ")
+    .attr('class', 'list-group-item')
+    .appendTo(ul)
+  const span_votes = $('<span/>')
+    .text(votes)
+    .appendTo(li_votes)
+
+  if(!isApproved) {
+    const button = $('<button/>')
+      .text("APPROVE")
+      .attr('type', 'button')
+      .attr('id', "buttonApprove" + id)
+      .attr('class', "btn btn-secondary")
+      .appendTo(div_col6)
+
+    const div_buttonInfo = $('<div/>')
+      .attr('id',"unapprovedProposal"+id)
+      .attr('class',address)
+      .appendTo(div_col6)
+  }
+}
+
+function createApprovedSubmissionsFromLoop(i, name, description, url, hasVoted, id, address, votedOn) {
+  if(i % 2 == 0) {
+    let div_row_i = $('<div/>')
+      .attr('class', 'row dupe'+i)
+      .appendTo("#vote-content div.container")
+  }
+
+  const div_col5 = $('<div/>')
+    .attr('class', 'col-5')
+    .appendTo(`#vote-content div.container div.row.dupe` + (i%2 == 0 ? i : i-1))
+  const div_col1_empty = $('<div/>')
+    .attr('class', 'col-1')
+    .attr('style', 'max-width: 4%')
+    .appendTo(`#vote-content div.container div.row.dupe` + (i%2 == 0 ? i : i-1))
+
+  const div_d_flex_column = $('<div/>')
+    .attr('class', "d-flex flex-column")
+    .appendTo(div_col5)
+
+  const div_d_flex1 = $('<div/>')
+    .text(name.toUpperCase())
+    .attr('style', 'font-family:brandon_grotesquebold; font-size:1.1rem;')
+    .appendTo(div_d_flex_column)
+
+  const div_d_flex2 = $('<div/>')
+    .attr('style', 'margin-top: -50px;')
+    .appendTo(div_d_flex_column)
+  const idea_img = $('<img/>')
+    .attr('style', 'float:right;')
+    .attr('height',"16%")
+    .attr('src',"imgs/idea.png")
+    .appendTo(div_d_flex2)
+
+  const div_d_flex3 = $('<div/>')
+    .text(description)
+    .attr('style', 'padding-bottom: 12px; font-family:brandon_grotesquelight; color: rgb(182, 182, 182); font-size:0.8rem; font-weight:800; text-align:justify;')
+    .appendTo(div_d_flex_column)
+
+  const div_d_flex4 = $('<div/>')
+    .text(url)
+    .attr('style', 'color: #37DCD8;')
+    .appendTo(div_d_flex_column)
+
+  const div_d_flex5 = $('<div/>')
+    .appendTo(div_d_flex_column)
+  if(!hasVoted) {
+    const button = $('<button/>')
+      .text("VOTE")
+      .attr('style','float:right; padding: 10px 25px 10px 25px')
+      .attr('type', 'button')
+      .attr('id', "buttonVote" + id)
+      .attr('class', "btn btn-secondary")
+      .appendTo(div_d_flex5)
+
+    const div_buttonInfo = $('<div/>')
+      .attr('id',"approvedProposal"+id)
+      .attr('class',address)
+      .appendTo(div_d_flex5)
+  } else if(address == votedOn){
+    const button = $('<button/>')
+      .text("REMOVE VOTE")
+      .attr('style','float:right; padding: 12px 22px 12px 22px')
+      .attr('type', 'button')
+      .attr('id', "buttonVote" + id)
+      .attr('class', "btn btn-warning")
+      .appendTo(div_d_flex5)
+
+    const div_buttonInfo = $('<div/>')
+      .attr('id',"approvedProposal"+id)
+      .attr('class',address)
+      .appendTo(div_d_flex5)
+  }
+
+}
+
+function approve() {
+  promisify(cb => MPToken.approve(CONTEST_ADDRESS, $('#approveInput').val(), {from: userAccount}, cb))
+}
+
+function stake() {
+  promisify(cb => DevContest.stake($('#approveInput').val(), {from: userAccount}, cb))
+}
+
+function releaseStake() {
+  promisify(cb => DevContest.releaseStake($('#approveInput').val(), {from: userAccount}, cb))
+}
+
+function registerSubmission() {
+  promisify(cb => DevContest.registerSubmission($('#validationCustom01').val(),
+                                $('#validationCustom02').val(),
+                                $('#validationCustom03').val(),
+                                {from: userAccount}, cb))
+}
+
+function editSubmission() {
+  promisify(cb => DevContest.editSubmission($('#validationCustom01').val(),
+                                $('#validationCustom02').val(),
+                                $('#validationCustom03').val(),
+                                {from: userAccount}, cb))
+}
+
+function validateAllowance() {
+  $("#approveCb").prop( "disabled", true )
+
+  $('#approveInput').keyup(() => {
+    if($(this).val() != '') {
+      $('#approveCb').prop('disabled', false)
+    } else {
+      $('#approveCb').prop('checked', false) // Unchecks it
+      $("#approveCb").prop( "disabled", true )
+    }
+  })
+}
+
+
+/* Approving an allowance */
+$('#approveCb').click(() => approve())
+
+/* Staking */
+$('#stake').click(() => stake())
+
+/* Release Stake */
+$('#buttonRelease').click(() => releaseStake())
+
+/***** Call all the necessary code *****/
+// Only these functions can auto-update problem free
+setInterval(() => {
+  loadBalances()
+  blocksRemaining()
+}, 1000)
+
+// Call these once on load
+validateAllowance()
+handleSubmission()
+loadApprovedSubmissions()
+loadUnapprovedSubmissions()

@@ -24,7 +24,7 @@ contract DevContest {
     address submitter;
     bool isApproved;
     bytes32 name;
-    bytes32 desc;
+    bytes desc;
     bytes32 url;
     uint256 id;
     uint256 votes;
@@ -43,7 +43,8 @@ contract DevContest {
   mapping (address => uint256) public stakedAmount;
   mapping (address => uint256) public voteCount;
   mapping (address => bool) public hasVoted;
-
+  // Mapping of where vote is
+  mapping (address => address) public votedOn;
 
   // Mapping of whether address has submitted
   mapping (address => bool) public hasSubmitted;
@@ -95,7 +96,7 @@ contract DevContest {
     /// @param _desc of project submission
     /// @param _url of project submission
     /// @return Success of submission register
-    function registerSubmission (bytes32 _name, bytes32 _desc, bytes32 _url) returns (bool success){
+    function registerSubmission (bytes32 _name, string _desc, bytes32 _url) returns (bool success){
 
       checkContestStatus();
       require(hasSubmitted[msg.sender] == false);
@@ -121,7 +122,7 @@ contract DevContest {
     /// @param _desc of project submission
     /// @param _url of project submission
     /// @return Success of submission edit
-    function editSubmission(bytes32 _name, bytes32 _desc, bytes32 _url) returns (bool success) {
+    function editSubmission(bytes32 _name, string _desc, bytes32 _url) returns (bool success) {
 
       Submission sub = submissions[msg.sender];
       require(sub.submitter == msg.sender);
@@ -201,6 +202,7 @@ contract DevContest {
     voteCount[msg.sender] = stakedAmount[msg.sender];
     approvedSub.votes = approvedSub.votes.add(stakedAmount[msg.sender]);
     hasVoted[msg.sender] = true;
+    votedOn[msg.sender] = _favoriteSubmission;
     Voted(_favoriteSubmission, msg.sender, stakedAmount[msg.sender]);
     return true;
   }
@@ -211,12 +213,14 @@ contract DevContest {
   function removeVote(address _unfortunateSubmission) returns (bool success) {
     require(stakedAmount[msg.sender] > 0);
     require(hasVoted[msg.sender] == true);
+    require(votedOn[msg.sender] == _unfortunateSubmission);
 
     Submission approvedSub = submissions[_unfortunateSubmission];
 
     approvedSub.votes = approvedSub.votes.sub(voteCount[msg.sender]);
     voteCount[msg.sender] = 0;
     hasVoted[msg.sender] = false;
+    votedOn[msg.sender] = address(0x0);
     RemovedVote(_unfortunateSubmission, msg.sender, stakedAmount[msg.sender]);
     return true;
   }
