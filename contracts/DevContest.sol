@@ -96,7 +96,7 @@ contract DevContest {
     /// @param _desc of project submission
     /// @param _url of project submission
     /// @return Success of submission register
-    function registerSubmission (bytes32 _name, string _desc, bytes32 _url) returns (bool success){
+    function registerSubmission (bytes32 _name, bytes _desc, bytes32 _url) returns (bool success){
 
       checkContestStatus();
       require(hasSubmitted[msg.sender] == false);
@@ -122,7 +122,7 @@ contract DevContest {
     /// @param _desc of project submission
     /// @param _url of project submission
     /// @return Success of submission edit
-    function editSubmission(bytes32 _name, string _desc, bytes32 _url) returns (bool success) {
+    function editSubmission(bytes32 _name, bytes _desc, bytes32 _url) returns (bool success) {
 
       Submission sub = submissions[msg.sender];
       require(sub.submitter == msg.sender);
