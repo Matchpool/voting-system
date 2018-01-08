@@ -236,22 +236,26 @@ function createUnapprovedSubmissionsFromLoop(i, name, description, isApproved, u
       .appendTo("#reset-content div.container")
   }
 
-  const div_col6 = $('<div/>')
-    .attr('class', 'col-6')
+  const div_col5 = $('<div/>')
+    .attr('class', 'col-5')
     .attr('style', 'padding-bottom: 40px;')
+    .appendTo(`#reset-content div.container div.row.dumb` + (i%2 == 0 ? i : i-1))
+  const div_col1_empty = $('<div/>')
+    .attr('class', 'col-1')
+    .attr('style', 'max-width: 4%')
     .appendTo(`#reset-content div.container div.row.dumb` + (i%2 == 0 ? i : i-1))
 
   const div_d_flex_column = $('<div/>')
     .attr('class', "d-flex flex-column")
-    .appendTo(div_col6)
+    .appendTo(div_col5)
   const div_d_flex1 = $('<div/>')
     .text(name.toUpperCase())
-    .attr('style', 'padding-bottom: 20px; font-family:brandon_grotesquebold; font-size:1.1rem;')
+    .attr('style', 'padding-bottom: 20px; font-family:Josefin Sans;font-weight:700; font-size:1.1rem;')
     .appendTo(div_d_flex_column)
 
   const div_d_flex2 = $('<div/>')
     .text(description)
-    .attr('style', 'padding-bottom: 12px; font-family:brandon_grotesquelight; color: rgb(182, 182, 182); font-size:0.8rem; font-weight:800; text-align:justify;')
+    .attr('style', 'word-break: break-word;padding-bottom: 12px; font-family:Josefin Sans;font-weight:300; color: #818182; font-size:0.8rem;text-align:justify;')
     .appendTo(div_d_flex_column)
 
   const div_d_flex3 = $('<div/>')
@@ -299,12 +303,13 @@ function createUnapprovedSubmissionsFromLoop(i, name, description, isApproved, u
       .attr('type', 'button')
       .attr('id', "buttonApprove" + id)
       .attr('class', "btn btn-secondary")
-      .appendTo(div_col6)
+      .attr('style', "float:right;")
+      .appendTo(div_col5)
 
     const div_buttonInfo = $('<div/>')
       .attr('id',"unapprovedProposal"+id)
       .attr('class',address)
-      .appendTo(div_col6)
+      .appendTo(div_col5)
   }
 }
 
@@ -329,7 +334,7 @@ function createApprovedSubmissionsFromLoop(i, name, description, url, hasVoted, 
 
   const div_d_flex1 = $('<div/>')
     .text(name.toUpperCase())
-    .attr('style', 'font-family:brandon_grotesquebold; font-size:1.1rem;')
+    .attr('style', 'font-family:Josefin Sans;font-weight:700; font-size:1.1rem;')
     .appendTo(div_d_flex_column)
 
   const div_d_flex2 = $('<div/>')
@@ -343,7 +348,7 @@ function createApprovedSubmissionsFromLoop(i, name, description, url, hasVoted, 
 
   const div_d_flex3 = $('<div/>')
     .text(description)
-    .attr('style', 'padding-bottom: 12px; font-family:brandon_grotesquelight; color: rgb(182, 182, 182); font-size:0.8rem; font-weight:800; text-align:justify;')
+    .attr('style', 'word-break: break-word;padding-bottom: 12px; font-family:Josefin Sans;font-weight:300; color: #818182; font-size:0.8rem;text-align:justify;')
     .appendTo(div_d_flex_column)
 
   const div_d_flex4 = $('<div/>')

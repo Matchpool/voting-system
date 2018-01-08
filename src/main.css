@@ -1,52 +1,6 @@
-@font-face {
-    font-family: 'brandon_grotesquebold_italic';
-    src: url('fonts/brandon_webfontkit/brandon_bld_it-webfont.woff2') format('woff2'),
-         url('fonts/brandon_webfontkit/brandon_bld_it-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
+@import url('https://fonts.googleapis.com/css?family=Josefin+Sans:300,400,700');
 
-@font-face {
-    font-family: 'brandon_grotesquelight_italic';
-    src: url('fonts/brandon_webfontkit/brandon_light_it-webfont.woff2') format('woff2'),
-         url('fonts/brandon_webfontkit/brandon_light_it-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'brandon_grotesqueMdIt';
-    src: url('fonts/brandon_webfontkit/brandon_med_it-webfont.woff2') format('woff2'),
-         url('fonts/brandon_webfontkit/brandon_med_it-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'brandon_grotesquebold';
-    src: url('fonts/brandon_webfontkit/brandon_bld-webfont.woff2') format('woff2'),
-         url('fonts/brandon_webfontkit/brandon_bld-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'brandon_grotesquelight';
-    src: url('fonts/brandon_webfontkit/brandon_light-webfont.woff2') format('woff2'),
-         url('fonts/brandon_webfontkit/brandon_light-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'brandon_grotesquemedium';
-    src: url('fonts/brandon_webfontkit/brandon_med-webfont.woff2') format('woff2'),
-         url('fonts/brandon_webfontkit/brandon_med-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
-*{font-family:brandon_grotesquemedium;}
+*{ font-family:'Josefin Sans'; }
 
 /* Main Cointainers */
 #navgroup {
@@ -203,7 +157,8 @@
 }
 
 .btn-secondary {
-  font-family:brandon_grotesquebold;
+  font-family:'Josefin Sans';
+  font-weight:700;
   letter-spacing: 2px;
   padding: 0.8rem;
   color: #1E1E4A;
@@ -252,7 +207,8 @@
 }
 
 .modal-content .col-12 {
-  font-family: brandon_grotesquebold;
+  font-family: 'Josefin Sans';
+  font-weight:300;
   letter-spacing: 2px;
   font-size: xx-large;
   margin-top: 25px;
@@ -261,7 +217,8 @@
 }
 
 #allowance {
-  font-family: brandon_grotesquebold;
+  font-family: 'Josefin Sans';
+  font-weight:300;
   letter-spacing: 2px;
   font-size: xx-large;
   margin-top: 25px;
