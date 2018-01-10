@@ -25,4 +25,4 @@ Contract meant to plug into any existing ERC20 token that wants to incentivize c
 ## Instructions
 
 In order to run this project, follow the guide in the instructions folder.
-https://github.com/cdavidr/DevContest/blob/master/instructions/DevContest%20Startup%20Guide.pdf
+https://github.com/mokn/DevContest/blob/master/instructions/DevContest%20Startup%20Guide.pdf
