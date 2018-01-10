@@ -43,11 +43,14 @@ contract DevContest {
   mapping (address => uint256) public stakedAmount;
   mapping (address => uint256) public voteCount;
   mapping (address => bool) public hasVoted;
+
   // Mapping of where vote is
   mapping (address => address) public votedOn;
 
   // Mapping of whether address has submitted
   mapping (address => bool) public hasSubmitted;
+  mapping (bytes32 => bool) public urlDirectory;
+
   // Contract owner must manually screen and approve submissions
   mapping (address => Submission) public submissions;
   address[] public unapprovedSubmissions;
@@ -99,7 +102,11 @@ contract DevContest {
     function registerSubmission (bytes32 _name, bytes _desc, bytes32 _url) returns (bool success){
 
       checkContestStatus();
+      require(_name[0] != 0);
+      require(_url[0] != 0);
+      require(_desc[0] != 0);
       require(hasSubmitted[msg.sender] == false);
+      require(urlDirectory[_url] == false);
 
       Submission memory newSub;
       newSub.isApproved = false;
@@ -111,6 +118,7 @@ contract DevContest {
       id += 1;
 
       submissions[msg.sender] = newSub;
+      urlDirectory[_url] = true;
       hasSubmitted[msg.sender] = true;
       unapprovedSubmissions.push(msg.sender);
       SubmissionRegistered(msg.sender);
@@ -126,6 +134,20 @@ contract DevContest {
 
       Submission sub = submissions[msg.sender];
       require(sub.submitter == msg.sender);
+      require(_name[0] != 0);
+      require(_url[0] != 0);
+      require(_desc[0] != 0);
+      bool isNewURL;
+      if(sha3(_url) != sha3(sub.url)) {
+        isNewURL = true;
+        require(urlDirectory[_url] == false);
+      }
+
+      if(isNewURL) {
+         urlDirectory[_url] = true;
+         urlDirectory[sub.url] = false;
+      }
+
       sub.name = _name;
       sub.desc = _desc;
       sub.url = _url;
