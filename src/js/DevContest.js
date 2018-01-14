@@ -3,6 +3,16 @@
       Contract.methodName(param1, param2,..., {from: what_msg.sender_will_be}, callback)
 */
 
+// TODO
+// Modal centering and padding (for stake gup and submit) (maybe release stake button highlight)
+// Clock up to minutes
+// Modal x button and Ok
+// Border on owner panel to quickly identify approved and unapproved proposals
+// try catch e alert display error
+// If not on metamask network display error page
+
+
+
 /* Promise wrapper using currying */
 const promisify = (inner) =>
     new Promise((resolve, reject) =>
@@ -86,7 +96,6 @@ async function loadApprovedSubmissions() {
   // Otherwise populate UI with proposals
   for(let i = 0; i < getApprovedSubmissionAddresses.length; i++) {
       const proposal = await promisify(cb => DevContest.submissions(getApprovedSubmissionAddresses[i], cb))
-
       const address = proposal['0']
       const isApproved = proposal['1']
       const name = web3.toUtf8(proposal['2'])
@@ -102,9 +111,9 @@ async function loadApprovedSubmissions() {
     const thisId = $(this).attr('id').match(/\d+$/)[0]
     const thisAddress = $("#approvedProposal" + thisId).attr('class')
     if(hasVoted) {
-      promisify(cb => DevContest.removeVote(thisAddress, {from: userAccount}, cb))
+      removeVote(thisAddress)
     } else {
-      promisify(cb => DevContest.vote(thisAddress, {from: userAccount}, cb))
+      vote(thisAddress)
     }
   })
 }
@@ -118,8 +127,8 @@ async function loadUnapprovedSubmissions() {
     createOwnerNav()
 
     // Owner specific functionality for increasing bounty and completion of the contest
-    $('#buttonAddBounty').click(() => promisify(cb => DevContest.addBounty($('#bounty').val(), {from: userAccount}, cb)))
-    $('#buttonCompleteContest').click(() => promisify(cb => DevContest.completeContest({from: userAccount}, cb)))
+    $('#buttonAddBounty').click(() => addBounty())
+    $('#buttonCompleteContest').click(() => completeContest())
 
     // Message when no proposals exist
     if(getUnapprovedSubmissionAddresses.length == 0) $("#reset-content div.container").append(`No proposals exist yet`)
@@ -141,7 +150,7 @@ async function loadUnapprovedSubmissions() {
     $('button[id^="buttonApprove"]').click(function() {
       const thisId = $(this).attr('id').match(/\d+$/)[0]
       const thisAddress = $("#unapprovedProposal" + thisId).attr('class')
-      promisify(cb => DevContest.approveSubmission(thisAddress, thisId, {from: userAccount}, cb))
+      approveSubmission(thisAddress, thisId)
     })
   }
 }
@@ -385,33 +394,92 @@ function createApprovedSubmissionsFromLoop(i, name, description, url, hasVoted, 
       .attr('class',address)
       .appendTo(div_d_flex5)
   }
-
 }
 
-function approve() {
-  promisify(cb => MPToken.approve(CONTEST_ADDRESS, $('#approveInput').val(), {from: userAccount}, cb))
+async function completeContest() {
+  try {
+    await promisify(cb => DevContest.completeContest({from: userAccount}, cb))
+  } catch(err) {
+    alert("An error occurred while completing the contest:\r\n"+err.toString())
+  }
 }
 
-function stake() {
-  promisify(cb => DevContest.stake($('#approveInput').val(), {from: userAccount}, cb))
+async function addBounty() {
+  try {
+    await promisify(cb => DevContest.addBounty($('#bounty').val(), {from: userAccount}, cb))
+  } catch(err) {
+    alert("An error occurred while adding to the bounty:\r\n"+err.toString())
+  }
 }
 
-function releaseStake() {
-  promisify(cb => DevContest.releaseStake($('#approveInput').val(), {from: userAccount}, cb))
+async function vote(address) {
+  try {
+    await promisify(cb => DevContest.vote(address, {from: user}, cb))
+  } catch(err) {
+    alert("An error occurred while voting for the submission:\r\n"+err.toString())
+  }
 }
 
-function registerSubmission() {
-  promisify(cb => DevContest.registerSubmission($('#validationCustom01').val(),
-                                $('#validationCustom02').val(),
-                                $('#validationCustom03').val(),
-                                {from: userAccount}, cb))
+async function removeVote(address) {
+  try {
+    await promisify(cb => DevContest.removeVote(address, {from: userAccount}, cb))
+  } catch(err) {
+    alert("An error occurred while removing the vote for the submission:\r\n"+err.toString())
+  }
 }
 
-function editSubmission() {
-  promisify(cb => DevContest.editSubmission($('#validationCustom01').val(),
-                                $('#validationCustom02').val(),
-                                $('#validationCustom03').val(),
-                                {from: userAccount}, cb))
+async function approveSubmission(address, id) {
+  try {
+    await promisify(cb => DevContest.approveSubmission(address, id, {from: userAccount}, cb))
+  } catch(err) {
+    alert("An error occurred while approving the submission:\r\n"+err.toString())
+  }
+}
+
+async function approve() {
+  try {
+    await promisify(cb => MPToken.approve(CONTEST_ADDRESS, $('#approveInput').val(), {from: userAccount}, cb))
+  } catch (err) {
+    alert("An error occurred approving the allowance:\r\n"+err.toString())
+  }
+}
+
+async function stake() {
+  try {
+    await promisify(cb => DevContest.stake($('#approveInput').val(), {from: userAccount}, cb))
+  } catch (err) {
+    alert("An error occurred while staking:\r\n"+err.toString())
+  }
+}
+
+async function releaseStake() {
+  try {
+    await promisify(cb => DevContest.releaseStake($('#approveInput').val(), {from: userAccount}, cb))
+  } catch (err) {
+    alert("An error occurred while releasing the stake:\r\n"+err.toString())
+  }
+}
+
+async function registerSubmission() {
+  try {
+    await promisify(cb => DevContest.registerSubmission($('#validationCustom01').val(),
+                                  $('#validationCustom02').val(),
+                                  $('#validationCustom03').val(),
+                                  {from: userAccount}, cb))
+  } catch (err) {
+    alert("An error occurred while registering the submission:\r\n"+err.toString())
+  }
+}
+
+async function editSubmission() {
+  try {
+    await promisify(cb => DevContest.editSubmission($('#validationCustom01').val(),
+                                  $('#validationCustom02').val(),
+                                  $('#validationCustom03').val(),
+                                  {from: userAccount}, cb))
+  } catch (err) {
+    alert("An error occurred while editing the submission:\r\n"+err.toString())
+  }
 }
 
 function validateAllowance() {
