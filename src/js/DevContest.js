@@ -4,12 +4,7 @@
 */
 
 // TODO
-// Clock up to minutes
-// Modal x button and Ok
-// Border on owner panel to quickly identify approved and unapproved proposals
-// try catch e alert display error
 // If not on metamask network display error page
-
 
 
 /* Promise wrapper using currying */
@@ -247,12 +242,13 @@ function createUnapprovedSubmissionsFromLoop(i, name, description, isApproved, u
   if(i % 2 == 0) {
     let div_row_i = $('<div/>')
       .attr('class', 'row dumb'+i)
+      .attr('style', 'padding-bottom:20px;')
       .appendTo("#reset-content div.container")
   }
 
   const div_col5 = $('<div/>')
     .attr('class', 'col-5')
-    .attr('style', 'padding-bottom: 40px;')
+    .attr('style', 'padding-top:40px; padding-bottom:40px;border:1px solid #ccc;')
     .appendTo(`#reset-content div.container div.row.dumb` + (i%2 == 0 ? i : i-1))
   const div_col1_empty = $('<div/>')
     .attr('class', 'col-1')
@@ -324,6 +320,8 @@ function createUnapprovedSubmissionsFromLoop(i, name, description, isApproved, u
       .attr('id',"unapprovedProposal"+id)
       .attr('class',address)
       .appendTo(div_col5)
+
+    div_col5.attr('style', 'padding-top:40px; padding-bottom:40px;border:1px solid #37DCD8;')
   }
 }
 
