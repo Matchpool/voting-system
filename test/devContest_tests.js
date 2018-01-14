@@ -258,23 +258,50 @@ contract('DevContest', function(accounts) {
 
     });
 
-    describe("STAKE FUNCTINO", function () {
-        it("Staking a normal amount", function () {
-            return devContest.stake(5, {from: accounts[1]})
-                .then(success, fail);
 
-            function success() {
-                return true;
-            }
 
-            function fail() {
-                return assert.fail('User couldn\'t stake an amount',
-                    'User could stake an amount',
-                    'User couldnt stake a normal amount(5)!!');
-            }
 
-        })
-    })
+    describe("STAKE", function () {
+
+
+        describe("Approve user to stake", function () {
+            it("Approve 2000 for accounts[0]", function () {
+                return mpToken.approve(devContest.address, 200).then(success, fail);
+
+                function success(suc) {
+                    return true;
+
+                }
+
+                function fail(fail) {
+                    return assert.fail('User couldnt be approved',
+                        'User could be approved',
+                        'User couldn\'t be approved for 200!');
+                }
+            });
+        });
+
+
+        describe("Stake amounts", function () {
+
+            it("Stake normal amount(5)", function () {
+                return devContest.stake(1, {from: accounts[0]})
+                    .then(success, fail);
+
+                function success() {
+                    return true;
+                }
+
+                function fail(err) {
+                    console.log(err);
+                    return assert.fail('User couldn\'t stake an amount',
+                        'User could stake an amount',
+                        'User couldnt stake a normal amount(5)!!');
+                }
+            });
+
+        });
+    });
 
 
 
