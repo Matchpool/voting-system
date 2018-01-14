@@ -3,10 +3,6 @@
       Contract.methodName(param1, param2,..., {from: what_msg.sender_will_be}, callback)
 */
 
-// TODO
-// If not on metamask network display error page
-
-
 /* Promise wrapper using currying */
 const promisify = (inner) =>
     new Promise((resolve, reject) =>

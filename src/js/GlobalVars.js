@@ -21,6 +21,15 @@ if (typeof web3 !== 'undefined') {
   web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"))
 }
 
+const ETHEREUM_NETWORK_ID = 1;
+const RINKEBY_NETWORK_ID = 4;
+
+web3.version.getNetwork(function(err, netId) {
+  if(netId != 4) {
+    alert("Please connect to the Rinkeby Network with metamask")
+  }
+})
+
 /* Contract and Events */
 const DevContestContract = web3.eth.contract(CONTEST_ABI)
 const MPTokenContract = web3.eth.contract(TOKEN_ABI)
