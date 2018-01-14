@@ -21,3 +21,8 @@ Contract meant to plug into any existing ERC20 token that wants to incentivize c
 - Add timeframe for submissions then allow for voting
 - Reward people who voted for winning submission with 10% of bounty
 - Tournament style with highest votes going to next round
+
+## Instructions
+
+In order to run this project, follow the guide in the instructions folder.
+https://github.com/cdavidr/DevContest/blob/master/instructions/DevContest%20Startup%20Guide.pdf
