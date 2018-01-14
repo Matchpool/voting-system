@@ -195,6 +195,7 @@ function createOwnerNav() {
 
   const div_row = $('<div/>')
     .attr('class', 'row')
+    .attr('style', "margin-bottom:-50px;")
     .appendTo("#reset-content div.container")
   const div_col5_empty = $('<div/>')
     .attr('class', 'col-5')
