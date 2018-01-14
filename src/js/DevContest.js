@@ -32,8 +32,7 @@ function timeRemaining(delta) {
   const seconds = delta % 60
   $('#time').html( days + " : " +
                         hours + " : " +
-                        minutes + " : " +
-                        seconds + " - ")
+                        minutes)
 }
 
 async function blocksRemaining() {
@@ -62,11 +61,18 @@ async function loadBalances() {
     $('#lockedstake').html(lockedstake['c'][0])
     $('#allowance').html(allowance['c'][0])
     if(allowance['c'][0] == 0) {
-      $("#stake").prop( "disabled", true )
+      $("#stake").prop( "disabled", true)
+    } else {
+      $("#stake").prop( "disabled", false)
     }
     if(allowance['c'][0] > 0) {
       $('#allowance').attr('style','color: #37DCD8')
       $(".modal-content .col-12").attr('style','color: #37DCD8')
+    }
+    if(lockedstake['c'][0] == 0) {
+      $("#buttonRelease").prop( "disabled", true)
+    } else {
+      $("#buttonRelease").prop( "disabled", false)
     }
     $('#displaybounty').html(bounty['c'][0])
   } catch (error) {
@@ -86,7 +92,6 @@ async function loadApprovedSubmissions() {
   // Otherwise populate UI with proposals
   for(let i = 0; i < getApprovedSubmissionAddresses.length; i++) {
       const proposal = await promisify(cb => DevContest.submissions(getApprovedSubmissionAddresses[i], cb))
-
       const address = proposal['0']
       const isApproved = proposal['1']
       const name = web3.toUtf8(proposal['2'])
@@ -102,9 +107,9 @@ async function loadApprovedSubmissions() {
     const thisId = $(this).attr('id').match(/\d+$/)[0]
     const thisAddress = $("#approvedProposal" + thisId).attr('class')
     if(hasVoted) {
-      promisify(cb => DevContest.removeVote(thisAddress, {from: userAccount}, cb))
+      removeVote(thisAddress)
     } else {
-      promisify(cb => DevContest.vote(thisAddress, {from: userAccount}, cb))
+      vote(thisAddress)
     }
   })
 }
@@ -118,8 +123,8 @@ async function loadUnapprovedSubmissions() {
     createOwnerNav()
 
     // Owner specific functionality for increasing bounty and completion of the contest
-    $('#buttonAddBounty').click(() => promisify(cb => DevContest.addBounty($('#bounty').val(), {from: userAccount}, cb)))
-    $('#buttonCompleteContest').click(() => promisify(cb => DevContest.completeContest({from: userAccount}, cb)))
+    $('#buttonAddBounty').click(() => addBounty())
+    $('#buttonCompleteContest').click(() => completeContest())
 
     // Message when no proposals exist
     if(getUnapprovedSubmissionAddresses.length == 0) $("#reset-content div.container").append(`No proposals exist yet`)
@@ -141,7 +146,7 @@ async function loadUnapprovedSubmissions() {
     $('button[id^="buttonApprove"]').click(function() {
       const thisId = $(this).attr('id').match(/\d+$/)[0]
       const thisAddress = $("#unapprovedProposal" + thisId).attr('class')
-      promisify(cb => DevContest.approveSubmission(thisAddress, thisId, {from: userAccount}, cb))
+      approveSubmission(thisAddress, thisId)
     })
   }
 }
@@ -190,6 +195,7 @@ function createOwnerNav() {
 
   const div_row = $('<div/>')
     .attr('class', 'row')
+    .attr('style', "margin-bottom:-50px;")
     .appendTo("#reset-content div.container")
   const div_col5_empty = $('<div/>')
     .attr('class', 'col-5')
@@ -233,12 +239,13 @@ function createUnapprovedSubmissionsFromLoop(i, name, description, isApproved, u
   if(i % 2 == 0) {
     let div_row_i = $('<div/>')
       .attr('class', 'row dumb'+i)
+      .attr('style', 'padding-bottom:20px;')
       .appendTo("#reset-content div.container")
   }
 
   const div_col5 = $('<div/>')
     .attr('class', 'col-5')
-    .attr('style', 'padding-bottom: 40px;')
+    .attr('style', 'padding-top:40px; padding-bottom:40px;border:1px solid #ccc;')
     .appendTo(`#reset-content div.container div.row.dumb` + (i%2 == 0 ? i : i-1))
   const div_col1_empty = $('<div/>')
     .attr('class', 'col-1')
@@ -310,6 +317,8 @@ function createUnapprovedSubmissionsFromLoop(i, name, description, isApproved, u
       .attr('id',"unapprovedProposal"+id)
       .attr('class',address)
       .appendTo(div_col5)
+
+    div_col5.attr('style', 'padding-top:40px; padding-bottom:40px;border:1px solid #37DCD8;')
   }
 }
 
@@ -385,33 +394,92 @@ function createApprovedSubmissionsFromLoop(i, name, description, url, hasVoted, 
       .attr('class',address)
       .appendTo(div_d_flex5)
   }
-
 }
 
-function approve() {
-  promisify(cb => MPToken.approve(CONTEST_ADDRESS, $('#approveInput').val(), {from: userAccount}, cb))
+async function completeContest() {
+  try {
+    await promisify(cb => DevContest.completeContest({from: userAccount}, cb))
+  } catch(err) {
+    alert("An error occurred while completing the contest:\r\n"+err.toString())
+  }
 }
 
-function stake() {
-  promisify(cb => DevContest.stake($('#approveInput').val(), {from: userAccount}, cb))
+async function addBounty() {
+  try {
+    await promisify(cb => DevContest.addBounty($('#bounty').val(), {from: userAccount}, cb))
+  } catch(err) {
+    alert("An error occurred while adding to the bounty:\r\n"+err.toString())
+  }
 }
 
-function releaseStake() {
-  promisify(cb => DevContest.releaseStake($('#approveInput').val(), {from: userAccount}, cb))
+async function vote(address) {
+  try {
+    await promisify(cb => DevContest.vote(address, {from: user}, cb))
+  } catch(err) {
+    alert("An error occurred while voting for the submission:\r\n"+err.toString())
+  }
 }
 
-function registerSubmission() {
-  promisify(cb => DevContest.registerSubmission($('#validationCustom01').val(),
-                                $('#validationCustom02').val(),
-                                $('#validationCustom03').val(),
-                                {from: userAccount}, cb))
+async function removeVote(address) {
+  try {
+    await promisify(cb => DevContest.removeVote(address, {from: userAccount}, cb))
+  } catch(err) {
+    alert("An error occurred while removing the vote for the submission:\r\n"+err.toString())
+  }
 }
 
-function editSubmission() {
-  promisify(cb => DevContest.editSubmission($('#validationCustom01').val(),
-                                $('#validationCustom02').val(),
-                                $('#validationCustom03').val(),
-                                {from: userAccount}, cb))
+async function approveSubmission(address, id) {
+  try {
+    await promisify(cb => DevContest.approveSubmission(address, id, {from: userAccount}, cb))
+  } catch(err) {
+    alert("An error occurred while approving the submission:\r\n"+err.toString())
+  }
+}
+
+async function approve() {
+  try {
+    await promisify(cb => MPToken.approve(CONTEST_ADDRESS, $('#approveInput').val(), {from: userAccount}, cb))
+  } catch (err) {
+    alert("An error occurred approving the allowance:\r\n"+err.toString())
+  }
+}
+
+async function stake() {
+  try {
+    await promisify(cb => DevContest.stake($('#approveInput').val(), {from: userAccount}, cb))
+  } catch (err) {
+    alert("An error occurred while staking:\r\n"+err.toString())
+  }
+}
+
+async function releaseStake() {
+  try {
+    await promisify(cb => DevContest.releaseStake($('#approveInput').val(), {from: userAccount}, cb))
+  } catch (err) {
+    alert("An error occurred while releasing the stake:\r\n"+err.toString())
+  }
+}
+
+async function registerSubmission() {
+  try {
+    await promisify(cb => DevContest.registerSubmission($('#validationCustom01').val(),
+                                  $('#validationCustom02').val(),
+                                  $('#validationCustom03').val(),
+                                  {from: userAccount}, cb))
+  } catch (err) {
+    alert("An error occurred while registering the submission:\r\n"+err.toString())
+  }
+}
+
+async function editSubmission() {
+  try {
+    await promisify(cb => DevContest.editSubmission($('#validationCustom01').val(),
+                                  $('#validationCustom02').val(),
+                                  $('#validationCustom03').val(),
+                                  {from: userAccount}, cb))
+  } catch (err) {
+    alert("An error occurred while editing the submission:\r\n"+err.toString())
+  }
 }
 
 function validateAllowance() {
@@ -422,7 +490,7 @@ function validateAllowance() {
       $('#approveCb').prop('disabled', false)
     } else {
       $('#approveCb').prop('checked', false) // Unchecks it
-      $("#approveCb").prop( "disabled", true )
+      $("#approveCb").prop( "disabled", true)
     }
   })
 }
