@@ -72,11 +72,18 @@ async function loadBalances() {
     $('#lockedstake').html(lockedstake['c'][0])
     $('#allowance').html(allowance['c'][0])
     if(allowance['c'][0] == 0) {
-      $("#stake").prop( "disabled", true )
+      $("#stake").prop( "disabled", true)
+    } else {
+      $("#stake").prop( "disabled", false)
     }
     if(allowance['c'][0] > 0) {
       $('#allowance').attr('style','color: #37DCD8')
       $(".modal-content .col-12").attr('style','color: #37DCD8')
+    }
+    if(lockedstake['c'][0] == 0) {
+      $("#buttonRelease").prop( "disabled", true)
+    } else {
+      $("#buttonRelease").prop( "disabled", false)
     }
     $('#displaybounty').html(bounty['c'][0])
   } catch (error) {
@@ -490,7 +497,7 @@ function validateAllowance() {
       $('#approveCb').prop('disabled', false)
     } else {
       $('#approveCb').prop('checked', false) // Unchecks it
-      $("#approveCb").prop( "disabled", true )
+      $("#approveCb").prop( "disabled", true)
     }
   })
 }

@@ -78,12 +78,12 @@
           <div class="modal-header">
             <h5 class="modal-title" id="stakeModalLabel">STAKE GUP</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true"><img src="imgs/exit.png" style="height:3%;"></span>
             </button>
           </div>
           <div class="modal-body">
             <div style="height: 20px"></div>
-            <p>First type in how much you want to stake and click the checkbox to set the allowed amount that the contract can stake on your behalf, and then stake. (Metamask transactions will be incurred. NOTE: The allowance will be replaced if you set it to a new value)</p>
+            <p>First set the allowance that the contract can stake on your behalf. Next, stake an amount you wish to use towards voting for a particular submission. (Metamask transactions will be incurred. NOTE: The allowance will be replaced if you set it to a new value)</p>
             <div class="input-group mb-3">
               <div class="input-group-prepend">
                 <button class="btn btn-outline-secondary" id="approveCb" type="button">SET ALLOWANCE</button>
@@ -113,15 +113,15 @@
     <!-- Modal for SUBMIT PROPOSAL button -->
     <div class="modal fade" id="submitModal" tabindex="-1" role="dialog" aria-labelledby="submitModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
-        <div class="modal-content">
+        <div class="modal-content" style="align-items:center;">
           <div class="modal-header">
             <h5 class="modal-title" id="submitModalLabel">SUCCESSFUL SUBMISSION</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true"><img src="imgs/exit.png" style="height:3%;"></span>
             </button>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+          <div class="modal-footer" style="padding-top:0px;">
+            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" style="padding-left: 30px; padding-right:30px;">Ok</button>
           </div>
         </div>
       </div>
