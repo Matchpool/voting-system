@@ -225,6 +225,11 @@
   border-bottom-right-radius: 0;
 }
 
+#time {
+  font-size: 36px;
+  color: #37DCD8;
+}
+
 #allowance {
   font-family: 'Josefin Sans';
   font-weight:300;

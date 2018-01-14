@@ -4,7 +4,6 @@
 */
 
 // TODO
-// Modal centering and padding (for stake gup and submit) (maybe release stake button highlight)
 // Clock up to minutes
 // Modal x button and Ok
 // Border on owner panel to quickly identify approved and unapproved proposals
@@ -42,8 +41,7 @@ function timeRemaining(delta) {
   const seconds = delta % 60
   $('#time').html( days + " : " +
                         hours + " : " +
-                        minutes + " : " +
-                        seconds + " - ")
+                        minutes)
 }
 
 async function blocksRemaining() {
