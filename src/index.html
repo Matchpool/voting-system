@@ -113,12 +113,9 @@
     <!-- Modal for SUBMIT PROPOSAL button -->
     <div class="modal fade" id="submitModal" tabindex="-1" role="dialog" aria-labelledby="submitModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
-        <div class="modal-content" style="align-items:center;">
+        <div class="modal-content" style="align-items:center;width:90%">
           <div class="modal-header">
             <h5 class="modal-title" id="submitModalLabel">SUCCESSFUL SUBMISSION</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true"><img src="imgs/exit.png" style="height:3%;"></span>
-            </button>
           </div>
           <div class="modal-footer" style="padding-top:0px;">
             <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" style="padding-left: 30px; padding-right:30px;">Ok</button>
@@ -142,7 +139,10 @@
       <!-- CONTENT OF PAGE LINKED TO SIDE NAVIGATION VIA BOOTSTRAP -->
       <div id="content" class="order-2 tab-content">
         <div id="vote-content" class="tab-pane fade show active" role="tabpanel" aria-labelledby="vote">
-          <div class="container"></div>
+          <div class="container">
+            <h1 style="color:red;">This webpage requires metamask</h1>
+            <h2>If you are seeing this message, please log into metamask (for example using Chrome w/ metamask extension)</h2>
+          </div>
         </div>
 
         <div id="submit-content" class="tab-pane fade" role="tabpanel" aria-labelledby="submit">
