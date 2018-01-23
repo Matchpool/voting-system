@@ -39,5 +39,9 @@ const MPToken = MPTokenContract.at(TOKEN_ADDRESS)
 /* Get user on page */
 const userAccount = web3.eth.accounts[0]
 
+if(userAccount != undefined) {
+  $('#vote-content div.container').html('')
+}
+
 /* Log to console current block number */
 web3.eth.getBlockNumber(function(error, result){ console.log("CURRENT BLOCK NUMBER:" + result) })
