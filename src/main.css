@@ -63,6 +63,7 @@
 }
 
 #content {
+  max-width: 84%;
   position: fixed;
   top: 20%;
   left: 16%;
@@ -221,6 +222,8 @@
 }
 
 #approveCb {
+  font-size: .75rem;
+  padding: .6rem 1.5rem;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
