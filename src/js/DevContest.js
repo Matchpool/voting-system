@@ -94,9 +94,9 @@ async function loadApprovedSubmissions() {
       const proposal = await promisify(cb => DevContest.submissions(getApprovedSubmissionAddresses[i], cb))
       const address = proposal['0']
       const isApproved = proposal['1']
-      const name = web3.toUtf8(proposal['2'])
-      const description = web3.toUtf8(proposal['3'])
-      const url = web3.toUtf8(proposal['4'])
+      const name = proposal['2']
+      const description = proposal['3']
+      const url = proposal['4']
       const id = proposal['5']
       const votes = proposal['6']
       createApprovedSubmissionsFromLoop(i, name, description, url, hasVoted, id, address, votedOn)
@@ -134,9 +134,9 @@ async function loadUnapprovedSubmissions() {
         const proposal = await promisify(cb => DevContest.submissions(getUnapprovedSubmissionAddresses[i], cb))
         const address = proposal['0']
         const isApproved = proposal['1']
-        const name = web3.toUtf8(proposal['2'])
-        const description = web3.toUtf8(proposal['3'])
-        const url = web3.toUtf8(proposal['4'])
+        const name = proposal['2']
+        const description = proposal['3']
+        const url = proposal['4']
         const id = proposal['5']
         const votes = proposal['6']
         createUnapprovedSubmissionsFromLoop(i, name, description, isApproved, url, id, votes, address)
@@ -158,9 +158,9 @@ async function handleSubmission() {
 
   if(userAccount == submission[0]) {
     const proposal = await promisify(cb => DevContest.submissions(submission[0], cb))
-    const name = web3.toUtf8(proposal['2'])
-    const description = web3.toUtf8(proposal['3'])
-    const url = web3.toUtf8(proposal['4'])
+    const name = proposal['2']
+    const description = proposal['3']
+    const url = proposal['4']
     $('#submit').html('EDIT PROPOSAL')
     $('#validationCustom01').attr('value', name)
     $('#validationCustom02').html(description)
