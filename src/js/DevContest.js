@@ -168,13 +168,13 @@ async function handleSubmission() {
   }
   /* Submitting a proposal */
   $('#buttonRegister').click(() => {
-    if(!hasSubmitted && $('#validationCustom01').val().length != 0 && $('#validationCustom01').val().length <= 32
-    && $('#validationCustom02').val().length >= 32 && $('#validationCustom02').val().length <= 256
-    && $('#validationCustom03').val().length != 0 && $('#validationCustom03').val().length <= 32) {
+    if(!hasSubmitted && $('#validationCustom01').val().length != 0
+    && $('#validationCustom02').val().length >= 32
+    && $('#validationCustom03').val().length != 0) {
       registerSubmission()
-    } else if($('#validationCustom01').val().length != 0 && $('#validationCustom01').val().length < 32
-    && $('#validationCustom02').val().length >= 32 && $('#validationCustom02').val().length <= 256
-    && $('#validationCustom03').val().length != 0 && $('#validationCustom03').val().length <= 32) {
+    } else if($('#validationCustom01').val().length != 0
+    && $('#validationCustom02').val().length >= 32
+    && $('#validationCustom03').val().length != 0) {
       editSubmission()
     }
   })
