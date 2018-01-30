@@ -414,7 +414,7 @@ async function addBounty() {
 
 async function vote(address) {
   try {
-    await promisify(cb => DevContest.vote(address, {from: user}, cb))
+    await promisify(cb => DevContest.vote(address, {from: userAccount}, cb))
   } catch(err) {
     alert("An error occurred while voting for the submission:\r\n"+err.toString())
   }
